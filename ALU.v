@@ -1,36 +1,38 @@
-module ALU #(parameter WIDTH=8)
-(
-	input [3:0] control,
-	input [4:0] shamt,
-	input [WIDTH-1:0] DATA_A,
-	input [WIDTH-1:0] DATA_B,
-	output reg [WIDTH-1:0] OUT,
+module ALU #(parameter WIDTH = 8)(
+    input [3:0] control,
+    input [WIDTH-1:0] DATA_A,
+    input [WIDTH-1:0] DATA_B,
+    output reg [WIDTH-1:0] OUT,
+    output reg Zero
 );
-localparam 	ADD = 4'b0000,
-			SUB = 4'b0001,
-			SLL = 4'b0010,
-			SLT = 4'b0011,
-			SLTU = 4'b0100,
-			XOR = 4'b0101,
-			SRL = 4'b0110,
-			SRA = 4'b0111,
-			OR = 4'b1000,
-			AND = 4'b1001
 
-always@(*) begin
-	case(control)
-		ADD: OUT = DATA_A + DATA_B;
-		SUB: OUT = DATA_A - DATA_B;
-		SLL: OUT = DATA_A << shamt;
-		SLT: OUT = (DATA_A < DATA_B) ? 32'd1 : 32'd0;
-		SLTU: OUT = (DATA_A < DATA_B) ? 32'd1 : 32'd0;
-		XOR: OUT = DATA_A ^ DATA_B;
-		SRL: OUT = DATA_A >> shamt;
-		SRA: OUT = $signed(DATA_A) >>> shamt;
-		OR:  OUT = DATA_A | DATA_B;
-		AND: OUT = DATA_A & DATA_B;
+localparam  ADD  = 4'b0000,
+            SUB  = 4'b0001,
+            SLL  = 4'b0010,
+            SLT  = 4'b0011,
+            SLTU = 4'b0100,
+            XOR_ = 4'b0101,
+            SRL  = 4'b0110,
+            SRA  = 4'b0111,
+            OR_  = 4'b1000,
+            AND_ = 4'b1001;  // << YOU FORGOT THIS SEMICOLON
 
-	endcase
+always @(*) begin
+    case (control)
+        ADD:  OUT = DATA_A + DATA_B;
+        SUB:  OUT = DATA_A - DATA_B;
+        SLL:  OUT = DATA_A << DATA_B[4:0];
+        SLT:  OUT = ($signed(DATA_A) < $signed(DATA_B)) ? {{(WIDTH-1){1'b0}},1'b1} : {WIDTH{1'b0}};
+        SLTU: OUT = (DATA_A < DATA_B) ? {{(WIDTH-1){1'b0}},1'b1} : {WIDTH{1'b0}};
+        XOR_: OUT = DATA_A ^ DATA_B;
+        SRL:  OUT = DATA_A >> DATA_B[4:0];
+        SRA:  OUT = $signed(DATA_A) >>> DATA_B[4:0];
+        OR_:  OUT = DATA_A | DATA_B;
+        AND_: OUT = DATA_A & DATA_B;
+        default: OUT = {WIDTH{1'b0}};
+    endcase
+
+    Zero = (OUT == {WIDTH{1'b0}}) ? 1'b1 : 1'b0;
 end
 
-endmodule	 
+endmodule

@@ -2,7 +2,7 @@ module Extender (
     input [31:0]DATA,
     input [2:0]select,
 
-    output reg [31:0]Extended_data,
+    output reg [31:0]Extended_data
 );
 
 localparam 	I_IMM = 3'b000,

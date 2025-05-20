@@ -1,4 +1,4 @@
-module Inst_Memory#(BYTE_SIZE=4, ADDR_WIDTH=32)
+module Inst_Memory #(parameter BYTE_SIZE=4, parameter ADDR_WIDTH=32)
 (
 	input [ADDR_WIDTH-1:0] ADDR,
 
