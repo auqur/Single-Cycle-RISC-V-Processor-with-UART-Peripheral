@@ -1,30 +1,32 @@
 def read_file_to_list(filename):
-    """
-    Reads a text file and returns a list where each element is a line in the file.
-
-    :param filename: The name of the file to read.
-    :return: A list of strings, where each string is a line from the file.
-    """
     with open(filename, 'r') as file:
         lines = file.readlines()
-        # Stripping newline characters from each line
         lines = [line.strip() for line in lines]
     return lines
 
-class Instruction:
-    """
-    Parses a 32-bit ARM instruction in hexadecimal format.
+class Instruction_Type:
+    LUI_INSTR       = "0110111"
+    AUIPC_INSTR     = "0010111"
+    JAL_INSTR       = "1101111"
+    BRANCH_INSTR    = "1100011"
+    JALR_INSTR      = "1100111"
+    MEM_LOAD_INSTR  = "0000011"
+    REG_IMM_INSTR   = "0010011"
+    MEM_STORE_INSTR = "0100011"
+    CNST_SHFT_INSTR = "0010011"
+    REG_REG_INSTR   = "0110011"
 
-    :param instruction: A string representing the 32-bit instruction in hex format.
-    :return: This class with the fields .
-    """
+class Instruction:
     def __init__(self, instruction):
-        # Convert the hex instruction to a 32-bit binary string
         self.binary_instr = format(int(instruction, 16), '032b')
-        #Since python indexing is reversed to extract fields (31-index) for msb and (32-index) for lsb
-        #For single bits do (31-index)
-        self.Cond = int(self.binary_instr[0:4], 2)
-        self.Op = int(self.binary_instr[4:6], 2)
+        
+        self.op = self.binary_instr[(31-6):(32-0)]
+        self.rd = int(self.binary_instr[(31-11):(32-7)], 2)
+        self.rs1 = int(self.binary_instr[(31-19):(32-15)], 2)
+        self.rs2 = int(self.binary_instr[(31-24):(32-20)], 2)
+        self.funct3 = int(self.binary_instr[(31-14):(32-12)], 2)
+        self.funct7 = int(self.binary_instr[(31-31):(32-25)], 2)
+        
         self.I = int(self.binary_instr[6], 2)
         self.cmd = int(self.binary_instr[7:11], 2)
         self.S = int(self.binary_instr[11], 2)
@@ -77,18 +79,10 @@ class Instruction:
 
 
 def rotate_right(value, shift, n_bits=32):
-    """
-    Rotate `value` to the right by `shift` bits.
-
-    :param value: The integer value to rotate.
-    :param shift: The number of bits to rotate by.
-    :param n_bits: The bit-width of the integer (default 32 for standard integer).
-    :return: The value after rotating to the right.
-    """
     shift %= n_bits  # Ensure the shift is within the range of 0 to n_bits-1
     return (value >> shift) | (value << (n_bits - shift)) & ((1 << n_bits) - 1)
 
-def shift_helper(value, shift,shift_type, n_bits=32):
+def shift_helper(value, shift, shift_type, n_bits=32):
     shift %= n_bits  # Ensure the shift is within the range of 0 to n_bits-1
     match shift_type:
         case 0:
@@ -108,7 +102,8 @@ def reverse_hex_string_endiannes(hex_string):
     reversed_string = bytes.fromhex(hex_string)
     reversed_string = reversed_string[::-1]
     reversed_string = reversed_string.hex()        
-    return  reversed_string
+    return reversed_string
+
 class ByteAddressableMemory:
     def __init__(self, size):
         self.size = size
