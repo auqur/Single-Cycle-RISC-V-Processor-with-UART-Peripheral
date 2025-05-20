@@ -5,10 +5,10 @@ module Controller
     input [31:0] Instr,
 
 
-    output PCSrc, RegWrite, ALUSrc, ResultSrc,
-    output [1:0] MemWrite,
-    output [2:0] ImmSrc,
-    output [3:0] ALUControl,
+    output reg PCSrc, RegWrite, ALUSrc, ResultSrc,
+    output reg [1:0] MemWrite,
+    output reg [2:0] ImmSrc,
+    output reg [3:0] ALUControl
 );
 
 // ALU Operations
@@ -26,14 +26,14 @@ localparam  ALU_ADD  = 4'b0000,
 //opcode
 localparam  LUI_INSTR       = 7'b0110111,
             AUIPC_INSTR     = 7'b0010111,
-            JAL_INSTR       = 7'b1101111;
+            JAL_INSTR       = 7'b1101111,
             BRANCH_INSTR    = 7'b1100011,
             JALR_INSTR      = 7'b1100111,
             MEM_LOAD_INSTR  = 7'b0000011,
             REG_IMM_INSTR   = 7'b0010011,
             MEM_STORE_INSTR = 7'b0100011,
             CNST_SHFT_INSTR = 7'b0010011,
-            REG_REG_INSTR   = 7'b0110011,
+            REG_REG_INSTR   = 7'b0110011;
 
 //f3
 localparam  BEQ  = 3'b000,
