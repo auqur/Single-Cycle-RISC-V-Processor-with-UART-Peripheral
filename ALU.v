@@ -15,7 +15,7 @@ localparam  ADD  = 4'b0000,
             SRL  = 4'b0110,
             SRA  = 4'b0111,
             OR_  = 4'b1000,
-            AND_ = 4'b1001;  // << YOU FORGOT THIS SEMICOLON
+            AND_ = 4'b1001;  
 
 always @(*) begin
     case (control)
