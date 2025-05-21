@@ -26,57 +26,20 @@ class Instruction:
         self.rs2 = int(self.binary_instr[(31-24):(32-20)], 2)
         self.funct3 = int(self.binary_instr[(31-14):(32-12)], 2)
         self.funct7 = int(self.binary_instr[(31-31):(32-25)], 2)
-        
-        self.I = int(self.binary_instr[6], 2)
-        self.cmd = int(self.binary_instr[7:11], 2)
-        self.S = int(self.binary_instr[11], 2)
-        self.Rn = int(self.binary_instr[12:16], 2)
-        self.Rd = int(self.binary_instr[16:20], 2)
-        self.rot = int(self.binary_instr[20:24], 2)
-        self.imm8 = int(self.binary_instr[24:32], 2)
-        self.shamt5 = int(self.binary_instr[20:25], 2)
-        self.sh = int(self.binary_instr[25:27], 2)
-        self.Rm = int(self.binary_instr[28:32], 2)
-        self.Rs = int(self.binary_instr[20:24], 2)
-        self.imm12 = int(self.binary_instr[20:32], 2)
-        self.L = int(self.binary_instr[11], 2)
-        if self.binary_instr[8] == '1':
-            # Perform sign extension by flipping all bits and subtracting 1
-            inverted_string = ''.join('0' if bit == '1' else '1' for bit in self.binary_instr[8:32])
-            self.imm24 = -int(inverted_string, 2) - 1
-        else:
-            # It's a positive number, convert normally
-            self.imm24 = int(self.binary_instr[8:32], 2)
-        self.L_branch = int(self.binary_instr[7], 2)
+        self.imm = 0
         
     def log(self,logger):
         logger.debug("****** Current Instruction *********")
         logger.debug("Binary string:%s", self.binary_instr)
-        if(self.binary_instr[4:28]=="000100101111111111110001"):
-            logger.debug("Operation type BX")
-            logger.debug("Rm: %d",self.Rm)
-        elif(self.Op == 0):
-            logger.debug("Operation type Data Processing")
-            logger.debug("cond:%s ",'{0:X}'.format(self.Cond))
-            logger.debug("Immediate bit:%d ",self.I)
-            logger.debug("cmd:%s ",'{0:X}'.format(self.cmd))
-            logger.debug("Set bit:%d ",self.S)
-            logger.debug("Rn:%d \t Rd:%d ",self.Rn,self.Rd)
-            if(self.I==1):
-                logger.debug("rot:%d \t imm8:%d ",self.rot,self.imm8)
-            else:
-                logger.debug("shamt5:%d \t sh:%d \t Rm:%d ",self.shamt5,self.sh,self.Rm)
-        elif(self.Op == 1):
-            logger.debug("Operation type Memory")
-            logger.debug("Load bit:%d ",self.L)
-            logger.debug("Rn:%d \t Rn:%d ",self.Rn,self.Rd)
-            logger.debug("imm12:%d",self.imm12)
-        elif(self.Op==2):
-            logger.debug("Operation type Branch (except Bx)")
-            logger.debug("Link bit:%d ",self.L_branch)
-            logger.debug("imm24:%d",self.imm24)
+        logger.debug("op:%s", self.op)
+        logger.debug("rd:%d", self.rd)
+        logger.debug("rs1:%d", self.rs1)
+        logger.debug("rs2:%d", self.rs2)
+        logger.debug("funct3:%d", self.funct3)
+        logger.debug("funct7:%d", self.funct7)
+        logger.debug("imm: %d", self.imm)
+        logger.debug("*************************************")
         
-
 
 def rotate_right(value, shift, n_bits=32):
     shift %= n_bits  # Ensure the shift is within the range of 0 to n_bits-1

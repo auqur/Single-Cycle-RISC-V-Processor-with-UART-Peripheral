@@ -20,6 +20,7 @@ class Constants:
     EQ = 0
     NE = 1
     AL = 14
+    
 
 import logging
 import cocotb
@@ -29,6 +30,9 @@ from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, Edge, Timer
 from cocotb.binary import BinaryValue
 
+def to_signed32(val):
+    val = val & 0xFFFFFFFF  # Mask to 32 bits
+    return val if val < 0x80000000 else val - 0x100000000
 
 
 class TB:
@@ -42,15 +46,13 @@ class TB:
         self.logger.setLevel(logging.DEBUG)
         #Initial values are all 0 as in a FPGA
         self.PC = 0
-        self.Z_flag = 0
+        self.Zero = 0
         self.Register_File =[]
-        for i in range(16):
+        for i in range(32):
             self.Register_File.append(0)
         #Memory is a special class helper lib to simulate HDL counterpart    
         self.memory = ByteAddressableMemory(1024)
-
         self.clock_cycle_count = 0        
-          
     #Calls user populated log functions    
     def log_dut(self):
         Log_Datapath(self.dut,self.logger)
@@ -60,109 +62,134 @@ class TB:
     def compare_result(self):
         self.logger.debug("************* Performance Model / DUT Data  **************")
         self.logger.debug("PC:%d \t PC:%d",self.PC,self.dut_PC.value.integer)
-        for i in range(15):
-            self.logger.debug("Register%d: %d \t %d",i,self.Register_File[i], self.dut_regfile.Reg_Out[i].value.integer)
-        self.logger.debug("Register%d: %d \t %d",15,self.Register_File[15], self.dut_regfile.Reg_15.value.integer)
-        assert self.PC == self.dut_PC.value
-        for i in range(15):
-           assert self.Register_File[i] == self.dut_regfile.Reg_Out[i].value
-        assert self.Register_File[15] == self.dut_regfile.Reg_15.value
         
-    #Function to write into the register file, handles writing into R15(PC)
-    def write_to_register_file(self,register_no, data):
-        if(data <0):
-            data = data +(1 << 32) 
-        if(register_no == 15):
-            self.PC = data
-        else:
-            self.Register_File[register_no] = data
+        for i in range(32):
+            ref_val = to_signed32(self.Register_File[i])
+            dut_val = to_signed32(self.dut_regfile.Reg_Out[i].value.integer)
+            self.logger.debug("Register%d: %d \t %d", i, ref_val, dut_val)
+        assert self.PC == self.dut_PC.value
+        for i in range(32):
+            assert self.Register_File[i] == self.dut_regfile.Reg_Out[i].value
 
     #A model of the verilog code to confirm operation, data is In_data
     def performance_model (self):
         self.logger.debug("**************** Clock cycle: %d **********************",self.clock_cycle_count)
-        self.clock_cycle_count = self.clock_cycle_count+1
+        self.clock_cycle_count = self.clock_cycle_count + 1
         #Read current instructions, extract and log the fields
         self.logger.debug("**************** Instruction No: %d **********************",int((self.PC)/4))
         current_instruction = self.Instruction_list[int((self.PC)/4)]
         current_instruction = current_instruction.replace(" ", "")
         #We need to reverse the order of bytes since little endian makes the string reversed in Python
         current_instruction = reverse_hex_string_endiannes(current_instruction)
-        #Initial R15 value for operations
-        self.Register_File[15] = self.PC + 8  
         self.PC = self.PC + 4
         #Flag to check if the current instruction will be executed.
-        execute_flag = False
+        execute_flag = True
         #Call Instruction calls to get each field from the instruction
         inst_fields = Instruction(current_instruction)
         inst_fields.log(self.logger)
-        match inst_fields.Cond:
-            case Constants.AL:
-                execute_flag=True
-            case Constants.EQ:
-                if(self.Z_flag == 1):
-                    execute_flag = True
-            case Constants.NE:
-                if(self.Z_flag == 0):
-                    execute_flag = True
         if(execute_flag):
-            #binary_instr is jsut for BX check             
-            binary_instr = format(int(current_instruction, 16), '032b')
-            #Weird BX condition
-            if(binary_instr[4:28]=="000100101111111111110001"):
-                self.PC = self.Register_File[inst_fields.Rm]   
-            elif(inst_fields.Op==0):
-                #Data Processing Case
-                if(inst_fields.I==1):
-                    datap_second_operand = rotate_right(inst_fields.imm8,inst_fields.rot*2)
+            if (inst_fields.op == "0110011"):
+                R1 = self.Register_File[inst_fields.rs1]
+                R2 = self.Register_File[inst_fields.rs2]
+                shamt = R2 & 0x1F
+                if (inst_fields.funct7 == "0000000"):
+                    match inst_fields.funct3:
+                        case "000": # ADD
+                            result = R1 + R2
+                            self.Register_File[inst_fields.rd] = result
+                        case "001": # SLL
+                            result = shift_helper(R1, shamt, 0)
+                            self.Register_File[inst_fields.rd] = result
+                        case "010": #SLT
+                            if (R1 < R2):
+                                self.Register_File[inst_fields.rd] = 1
+                            else:
+                                self.Register_File[inst_fields.rd] = 0
+                        case "011": #SLTU
+                            R1 = R1 & 0xFFFFFFFF
+                            R2 = R2 & 0xFFFFFFFF
+                            if (R1 < R2):
+                                self.Register_File[inst_fields.rd] = 1
+                            else:
+                                self.Register_File[inst_fields.rd] = 0
+                        case "100": # XOR
+                            result = R1 ^ R2
+                            self.Register_File[inst_fields.rd] = result
+                        case "101": # SRL
+                            result = shift_helper(R1, shamt, 1)
+                            self.Register_File[inst_fields.rd] = result
+                        case "110": # OR
+                            result = R1 | R2
+                            self.Register_File[inst_fields.rd] = result
+                        case "111":
+                            result = R1 & R2
+                            self.Register_File[inst_fields.rd] = result
+                
+                elif (inst_fields.funct7 == "0100000"):
+                    match inst_fields.funct3:
+                        case "000": # SUB
+                            result = R1 - R2
+                            self.Register_File[inst_fields.rd] = result
+                        case "101": # SRA
+                            result = shift_helper(R1, shamt, 2)
+                            self.Register_File[inst_fields.rd] = result
                 else:
-                    datap_second_operand = shift_helper(self.Register_File[inst_fields.Rm],inst_fields.shamt5,inst_fields.sh) 
-                match inst_fields.cmd:
-                    case Constants.AND:
-                        datap_result = self.Register_File[inst_fields.Rn] & datap_second_operand
-                        self.write_to_register_file(inst_fields.Rd,datap_result)
-                    case Constants.ORR:
-                        datap_result = self.Register_File[inst_fields.Rn]  | datap_second_operand
-                        self.write_to_register_file(inst_fields.Rd,datap_result)
-                    case Constants.ADD:
-                        datap_result = self.Register_File[inst_fields.Rn] + datap_second_operand
-                        self.write_to_register_file(inst_fields.Rd,datap_result)
-                    case Constants.SUB:
-                        datap_result = self.Register_File[inst_fields.Rn]  - datap_second_operand
-                        self.write_to_register_file(inst_fields.Rd,datap_result)
-                    case Constants.MOV:
-                        datap_result = datap_second_operand
-                        self.write_to_register_file(inst_fields.Rd,datap_result)
-                    case Constants.CMP:
-                        datap_result = self.Register_File[inst_fields.Rn]  - datap_second_operand
-                    case _:
-                        self.logger.error("Not supported data processing instruction!!")
-                        assert False 
-                #Check S bit to set Z-flag, only CMP should have this
-                if(inst_fields.S==1):
-                    if(datap_result == 0):
-                        self.Z_flag = 1
-                    else:
-                        self.Z_flag = 0
-            #Memory Operations case        
-            elif(inst_fields.Op == 1):
-                if(inst_fields.L==1):
-                    self.write_to_register_file(inst_fields.Rd,int.from_bytes(self.memory.read(self.Register_File[inst_fields.Rn] +inst_fields.imm12)))
-                else:
-                    self.memory.write(self.Register_File[inst_fields.Rn] + inst_fields.imm12,self.Register_File[inst_fields.Rd])
-            #Branch case
-            elif(inst_fields.Op == 2):
-                if (inst_fields.L_branch):
-                    self.Register_File[14]=self.PC
-                #Only +4 since we already increment 4 at the start
-                self.PC = self.PC + 4 + (inst_fields.imm24*4)
-            else:
-                self.logger.error("Invalid operation type of 3!!")
-                assert False
-        else:
-            self.logger.debug("Current Instruction is not executed")
+                    self.logger.debug("Unknown funct7 (%s) value for op (%s)", inst_fields.funct7, inst_fields.op)
 
-        #We change register file 15 (PC + 8) after increment and branches because we compare after the clock cycle
-        self.Register_File[15] = self.PC + 8
+            elif (inst_fields.op == "0010011"):
+                R1 = self.Register_File[inst_fields.rs1]
+                Imm = inst_fields.imm
+                match inst_fields.funct3:
+                    case "000": # ADDI
+                        result = R1 + Imm
+                        self.Register_File[inst_fields.rd] = result 
+                    case "001": # SLLI
+                        result = shift_helper(R1, Imm, 0)
+                        self.Register_File[inst_fields.rd] = result
+                    case "010": # SLTI
+                        if (R1 < Imm):
+                            self.Register_File[inst_fields.rd] = 1
+                        else:
+                            self.Register_File[inst_fields.rd] = 0
+                    case "011": # SLTIU
+                        R1 = R1 & 0xFFFFFFFF
+                        Imm = Imm & 0xFFFFFFFF
+                        if (R1 < Imm):
+                            self.Register_File[inst_fields.rd] = 1
+                        else:
+                            self.Register_File[inst_fields.rd] = 0
+                    case "100": # XORI
+                        result = R1 ^ Imm
+                        self.Register_File[inst_fields.rd] = result
+                    case "101": # SRLI & SRAI
+                        if (inst_fields.funct7 == "0000000"):
+                            result = shift_helper(R1, Imm, 1)
+                        elif (inst_fields.funct7 == "0100000"):
+                            result = shift_helper(R1, Imm, 2)
+                        self.Register_File[inst_fields.rd] = result
+                    case "110": # ORI
+                        result = R1 | Imm
+                        self.Register_File[inst_fields.rd] = result
+                    case "111": # ANDI
+                        result = R1 & Imm
+                        self.Register_File[inst_fields.rd] = result
+    
+            elif (inst_fields.op == "0000011"):
+                R1 = self.Register_File[inst_fields.rs1]
+                Imm = inst_fields.imm
+                match inst_fields.funct3:
+                    case "000": # LB
+                        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     async def run_test(self):
         self.performance_model()
         #Wait 1 us the very first time bc. initially all signals are "X"
@@ -191,5 +218,5 @@ async def Single_cycle_test(dut):
     await FallingEdge(dut.clk)
     instruction_lines = read_file_to_list('Instructions.hex')
     #Give PC signal handle and Register File MODULE handle
-    tb = TB(instruction_lines,dut, dut.PC, dut.my_datapath.reg_file_dp)
+    tb = TB(instruction_lines,dut, dut.PC, dut.datapath.Register_File)
     await tb.run_test()
