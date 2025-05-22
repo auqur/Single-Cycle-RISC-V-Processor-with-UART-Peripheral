@@ -15,6 +15,14 @@ class Instruction_Type:
     MEM_STORE_INSTR = "0100011"
     CNST_SHFT_INSTR = "0010011"
     REG_REG_INSTR   = "0110011"
+    
+def zero_extend_lsb(bin_str):
+    extended = bin_str.ljust(32, '0')
+    return int(extended, 2)
+
+def sign_extend(value, bits):
+    sign_bit = value[0]
+    return sign_bit * (32 - bits) + value
 
 class Instruction:
     def __init__(self, instruction):
@@ -26,7 +34,27 @@ class Instruction:
         self.rs2 = int(self.binary_instr[(31-24):(32-20)], 2)
         self.funct3 = int(self.binary_instr[(31-14):(32-12)], 2)
         self.funct7 = int(self.binary_instr[(31-31):(32-25)], 2)
-        self.imm = 0
+
+        if self.op == "0110111" or self.op == "0010111":
+            self.imm = zero_extend_lsb(self.binary_instr[(31-31):(32-12)])
+        # elif self.op == "1101111":
+        #     imm20    = self.binary_instr[0]           
+        #     imm10_1  = self.binary_instr[1:11]       
+        #     imm11    = self.binary_instr[11]          
+        #     imm19_12 = self.binary_instr[12:20]      
+        #     imm_bin  = imm20 + imm19_12 + imm11 + imm10_1 + '0'
+        #     self.imm = sign_extend(imm_bin, 20)
+        
+        elif(self.Op == "1101111"):
+            Imm20   = (int(self.binary_instr[0], 2) << 20) & 0xFFFFFFFF#(31-31):(32-31)
+            Imm10_1 = (int(self.binary_instr[(31-30):(32-21)], 2) << 1)& 0xFFFFFFFF
+            Imm19_12 = (int(self.binary_instr[(31-19):(32-12)], 2) << 12)& 0xFFFFFFFF
+            Imm11    = (int(self.binary_instr[31-20], 2) << 11) & 0xFFFFFFFF#(31-7):(32-7)
+            if Imm20:#0001 0000 0000 0000 1110
+                self.imm =  (Imm20 | Imm10_1 | Imm19_12 | Imm11) | 0xFFE00000
+                self.imm = self.Imm - (1 << 32)
+            else:
+                self.imm =  (Imm20 | Imm10_1 | Imm19_12 | Imm11) & 0xFFFFFFFF
         
     def log(self,logger):
         logger.debug("****** Current Instruction *********")

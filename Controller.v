@@ -100,7 +100,7 @@ end
 always@(*) begin
     case(op) 
         LUI_INSTR: begin
-
+            
 
 
         end
