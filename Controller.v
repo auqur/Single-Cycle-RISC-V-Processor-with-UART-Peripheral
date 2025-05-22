@@ -11,17 +11,6 @@ module Controller
     output reg [3:0] ALUControl
 );
 
-// ALU Operations
-localparam  ALU_ADD  = 4'b0000,
-            ALU_SUB  = 4'b0001,
-            ALU_SLL  = 4'b0010,
-            ALU_SLT  = 4'b0011,
-            ALU_SLTU = 4'b0100,
-            ALU_XOR  = 4'b0101,
-            ALU_SRL  = 4'b0110,
-            ALU_SRA  = 4'b0111,
-            ALU_OR   = 4'b1000,
-            ALU_AND  = 4'b1001;
 
 //opcode
 localparam  LUI_INSTR       = 7'b0110111,
@@ -97,22 +86,11 @@ initial begin
     ALUControl = 4'b0000;
 end
 
-always@(*) begin
-    case(op) 
-        LUI_INSTR: begin
-            
-
-
-        end
-
-
-
-
-
-    endcase
-
-end
-
+//ALUControl
+assign ALUContro[3:1] = (op == REG_REG_INST | op == REG_IMM_INSTR | op == CNST_SHFT_INSTR ) ? funct3 :
+                        3'b0;
+assign ALUControl[0] = (op == REG_REG_INST | op == REG_IMM_INSTR | op == CNST_SHFT_INSTR ) ? (funct7 == 7'b0100000) :
+                        1'b0;
 
 
 
