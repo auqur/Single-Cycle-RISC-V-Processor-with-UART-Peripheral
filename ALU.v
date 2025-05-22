@@ -8,14 +8,16 @@ module ALU #(parameter WIDTH = 8)(
 
 localparam  ADD  = 4'b0000,
             SUB  = 4'b0001,
+            AND = 4'b1110;
+            OR  = 4'b1100,
+            XOR = 4'b1000,
             SLL  = 4'b0010,
-            SLT  = 4'b0011,
-            SLTU = 4'b0100,
-            XOR_ = 4'b0101,
-            SRL  = 4'b0110,
-            SRA  = 4'b0111,
-            OR_  = 4'b1000,
-            AND_ = 4'b1001;  
+            SRL  = 4'b1010,
+            SRA = 4'b1011,
+            SLT  = 4'b0100,
+            SLTU = 4'b0110,
+
+              
 
 always @(*) begin
     case (control)

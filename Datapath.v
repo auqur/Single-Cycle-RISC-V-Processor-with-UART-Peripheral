@@ -2,7 +2,7 @@ module Datapath
 (
     input clk, reset,
     inout PCSrc, RegWrite, ALUSrc, ResultSrc,
-    input [1:0] MemWrite,
+    input [1:0] MemWrite, shctrl
     input [2:0] ImmSrc,
     input [3:0] ALUControl,
     input [4:0] Debug_Source_select,
@@ -13,8 +13,8 @@ module Datapath
 );
 
 wire [31:0] PCNext, PCPlus4, PCTarget;
-wire [31:0] SrcA, SrcB;
-wire [31:0] WriteData, ReadData;
+wire [31:0] SrcA, SrcB, RF_OUT1, RF_OUT2;
+wire [31:0] ReadData;
 wire [31:0] Result;
 wire [31:0] ImmExt;
 wire [31:0] ALUResult;
@@ -53,13 +53,13 @@ Register_file #(32) Register_File
     .clk(clk),
     .write_enable(RegWrite),
     .reset(reset),
-    .Source_select_0(Instr[19:15]),
-    .Source_select_1(Instr[24:20]),
+    .Source_select_0(Instr[19:15]), //rs1
+    .Source_select_1(Instr[24:20]), //rs2
     .Debug_Source_select(Debug_Source_select),
-    .Destination_select(Instr[11:7]),
+    .Destination_select(Instr[11:7]), //rd
     .DATA(Result),
-    .out_0(SrcA),
-    .out_1(WriteData),
+    .out_0(RF_OUT1),
+    .out_1(RF_OUT2),
     .Debug_out(Debug_out)
 );
 
@@ -73,7 +73,7 @@ Extender extender
 Mux_2to1 #(32) SrcB_Mux
 (
     .select(ALUSrc),
-    .input_0(WriteData),
+    .input_0(RF_OUT2),
     .input_1(ImmExt),
     .output_value(SrcB)
 );
