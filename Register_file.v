@@ -15,6 +15,8 @@ module Register_file #(parameter WIDTH = 32)(
 wire [WIDTH-1:0] Reg_Out [31:0];
 wire [31:0] Reg_enable;
 
+Register_rsten #(WIDTH) Reg0 (.clk(clk), .reset(reset), .we(0), .DATA(DATA), .OUT(Reg_Out[0]));
+
 genvar i;
 generate
     for (i = 1 ; i < 31 ; i = i + 1) begin : registers
@@ -22,8 +24,8 @@ generate
     end
 endgenerate
 
-assign out_0       = (Source_select_0 == 5'd0) ? {WIDTH{1'b0}} : Reg_Out[Source_select_0];
-assign out_1       = (Source_select_1 == 5'd0) ? {WIDTH{1'b0}} : Reg_Out[Source_select_1];
-assign Debug_out   = (Debug_Source_select == 5'd0) ? {WIDTH{1'b0}} : Reg_Out[Debug_Source_select];
+assign out_0       = Reg_Out[Source_select_0];
+assign out_1       = Reg_Out[Source_select_1];
+assign Debug_out   = Reg_Out[Debug_Source_select];
 
 endmodule
