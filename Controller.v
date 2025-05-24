@@ -7,7 +7,7 @@ module Controller
 
     output wire PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
     output wire [1:0] MemWrite, ALUSrc,
-    output reg [2:0] ImmSrc,
+    output reg [2:0] ImmSrc, READMODE,
     output wire [3:0] ALUControl
 );
 
@@ -126,6 +126,15 @@ assign ImmSrc = (op == REG_IMM_INSTR & funct3 == SLTIU) ? 3'b001 :  //UEX12
                 (op == JAL_INSTR) ? 3'b011 : //JALEX
                 (op == LUI_INSTR | op == AUIPC_INSTR) ? 3'b100 : //U_IMM
                 3'b000; //default is SEX12
+
+//READMODE
+assign READMODE = (op == MEM_LOAD_INSTR) ? 
+                  ((funct3 == LB) ? 3'b000 : 
+                   (funct3 == LH) ? 3'b001 : 
+                   (funct3 == LW) ? 3'b010 : 
+                   (funct3 == LBU) ? 3'b100 : 
+                   (funct3 == LHU) ? 3'b101 : 3'b000) : 
+                  3'b000; //default is WORD
 
 //ALUSrc
 assign ALUSrc[0] = ((op == BRANCH_INSTR) | (op == AUIPC_INSTR) | (op == JAL_INSTR));

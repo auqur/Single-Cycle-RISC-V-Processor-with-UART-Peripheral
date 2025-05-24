@@ -14,13 +14,13 @@ localparam 	SEX12 = 3'b000,
 always @(*) begin
     case (select)
 
-        SEX12: Extended_data = {21{DATA[31]}, DATA[30:20]};
+        SEX12: Extended_data = {{21{DATA[31]}}, DATA[30:20]};
 
         UEX12: Extended_data = {21'b0, DATA[30:25]};
 
-        B_IMM: Extended_data = {20{DATA[31]}, DATA[7], DATA[30:25], DATA[11:8], 1'b0};
+        B_IMM: Extended_data = {{20{DATA[31]}}, DATA[7], DATA[30:25], DATA[11:8], 1'b0};
 
-        JALEX: Extended_data = {12{DATA[31]}, DATA[19:12], DATA[20], DATA[30:21], 1'b0};
+        JALEX: Extended_data = {{12{DATA[31]}}, DATA[19:12], DATA[20], DATA[30:21], 1'b0};
 
         U_IMM: Extended_data = {DATA[31:12], 12'b0};
         

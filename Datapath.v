@@ -3,7 +3,7 @@ module Datapath
     input clk, reset,
     input PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
     input [1:0] MemWrite, shctrl, ALUSrc,
-    input [2:0] ImmSrc,
+    input [2:0] ImmSrc, READMODE,
     input [3:0] ALUControl,
     input [4:0] Debug_Source_select,
 
@@ -106,6 +106,7 @@ Memory #(4, 32) Data_Memory
 (
     .clk(clk),
     .WE(MemWrite),
+    .READMODE(READMODE),
     .ADDR(ALUResult),
     .WD(WriteData),
     .RD(ReadData)
