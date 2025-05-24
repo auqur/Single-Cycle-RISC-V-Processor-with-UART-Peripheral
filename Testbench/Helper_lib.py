@@ -50,7 +50,7 @@ class Instruction:
             return imm
         
         def _J_Imm():
-            imm = self.binary_instr[(31-31)] + self.binary_instr[(31-19):(32-12)] + self.binary_instr[(31-20)] + self.binary_instr[(31-30):(32-25)] + + self.binary_instr[(31-24):(32-21)] + '0'
+            imm = self.binary_instr[(31-31)] + self.binary_instr[(31-19):(32-12)] + self.binary_instr[(31-20)] + self.binary_instr[(31-30):(32-25)] + self.binary_instr[(31-24):(32-21)] + '0'
             imm = extend_to_32bit(int(imm, 2), 21, signed=True)
             return imm
     

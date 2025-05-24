@@ -8,12 +8,11 @@ CWD=$(shell pwd)
 SIM ?= icarus
 TOPLEVEL_LANG ?=verilog
 
-
 VERILOG_SOURCES =$(CWD)/../HDL/*.v
 
 
 TOPLEVEL = Single_Cycle_Computer
-MODULE := Single_Cycle_Test
+MODULE := Single_cycle_test
 COCOTB_HDL_TIMEUNIT=1us
 COCOTB_HDL_TIMEPRECISION=1us
 
