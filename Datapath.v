@@ -2,7 +2,7 @@ module Datapath
 (
     input wire clk, reset,
     input wire PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
-    input wire [1:0] MemWrite, shctrl, ALUSrc,
+    input wire [1:0] MemWrite, ALUSrc,
     input wire [2:0] ImmSrc, READMODE,
     input wire [3:0] ALUControl,
     input wire [4:0] Debug_Source_select,
