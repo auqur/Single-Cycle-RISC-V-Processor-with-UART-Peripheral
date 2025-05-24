@@ -15,11 +15,13 @@ module Register_file #(parameter WIDTH = 32)(
 wire [WIDTH-1:0] Reg_Out [31:0];
 wire [31:0] Reg_enable;
 
+Decoder_5to32 decoder(.IN(Destination_select), .OUT(Reg_enable));
+
 Register_rsten #(WIDTH) Reg0 (.clk(clk), .reset(reset), .we(1'b0), .DATA(DATA), .OUT(Reg_Out[0]));
 
 genvar i;
 generate
-    for (i = 1 ; i < 31 ; i = i + 1) begin : registers
+    for (i = 1 ; i < 32 ; i = i + 1) begin : registers
         Register_rsten #(WIDTH) Reg (.clk(clk), .reset(reset), .we(Reg_enable[i] & write_enable), .DATA(DATA), .OUT(Reg_Out[i]));
     end
 endgenerate

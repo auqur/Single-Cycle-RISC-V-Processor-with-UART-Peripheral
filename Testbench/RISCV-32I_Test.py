@@ -41,7 +41,7 @@ class TB:
         for i in range(32):
             self.Register_File.append(0)
         #Memory is a special class helper lib to simulate HDL counterpart    
-        self.memory = ByteAddressableMemory(1024)
+        self.memory = ByteAddressableMemory(2048)
         self.clock_cycle_count = 0        
     #Calls user populated log functions    
     def log_dut(self):
@@ -51,7 +51,7 @@ class TB:
     #Compares and lgos the PC and register file of Python module and HDL design
     def compare_result(self):
         self.logger.debug("************* Performance Model / DUT Data  **************")
-        self.logger.debug("PC:%d \t PC:%d",self.PC,self.dut_PC.value)
+        self.logger.debug("PC:%d \t PC:%d",self.PC,self.dut_PC.value.integer)
         
         for i in range(32):
             ref_val = to_signed32(self.Register_File[i])
@@ -280,7 +280,7 @@ class TB:
 @cocotb.test()
 async def RISCV_Test(dut):
     #Generate the clock
-    await cocotb.start(Clock(dut.clk, 10, 'ms').start(start_high=False))
+    await cocotb.start(Clock(dut.clk, 10, 'us').start(start_high=False))
     #Reset onces before continuing with the tests
     dut.reset.value=1
     await RisingEdge(dut.clk)
@@ -288,5 +288,5 @@ async def RISCV_Test(dut):
     await FallingEdge(dut.clk)
     instruction_lines = read_file_to_list('Instructions.hex')
     #Give PC signal handle and Register File MODULE handle
-    tb = TB(instruction_lines,dut, dut.PC, dut.dp.Register_File)
+    tb = TB(instruction_lines,dut, dut.Debug_PC, dut.dp.Register_File)
     await tb.run_test()

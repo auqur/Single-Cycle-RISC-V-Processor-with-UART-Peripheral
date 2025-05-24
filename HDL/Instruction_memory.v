@@ -8,7 +8,7 @@ module Inst_Memory #(parameter BYTE_SIZE=4, parameter ADDR_WIDTH=32)
 reg [7:0] mem [255:0];
 
 initial begin
-	$readmemh("instructions.hex", mem, 0);
+	$readmemh("Instructions.hex", mem, 0);
 end
 
 genvar i;

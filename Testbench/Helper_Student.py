@@ -89,24 +89,9 @@ def decode_and_print_instruction(inst_fields):
 def Log_Datapath(dut,logger):
     #Log whatever signal you want from the datapath, called before positive clock edge
     logger.debug("************ DUT DATAPATH Signals ***************")
-    #dut._log.info("reset:%s", ToHex(dut.my_datapath.reset.value))
-    #dut._log.info("ALUSrc:%s", ToHex(dut.my_datapath.ALUSrc.value))
-    #dut._log.info("MemWrite:%s", ToHex(dut.my_datapath.MemWrite.value))
-    #dut._log.info("RegWrite:%s", ToHex(dut.my_datapath.RegWrite.value))
-    #dut._log.info("PCSrc:%s", ToHex(dut.my_datapath.PCSrc.value))
-    #dut._log.info("MemtoReg:%s", ToHex(dut.my_datapath.MemtoReg.value))
-    #dut._log.info("RegSrc:%s", ToHex(dut.my_datapath.RegSrc.value))
-    #dut._log.info("ImmSrc:%s", ToHex(dut.my_datapath.ImmSrc.value))
-    #dut._log.info("ALUControl:%s", ToHex(dut.my_datapath.ALUControl.value))
-    #dut._log.info("CO:%s", ToHex(dut.my_datapath.CO.value))
-    #dut._log.info("OVF:%s", ToHex(dut.my_datapath.OVF.value))
-    #dut._log.info("N:%s", ToHex(dut.my_datapath.N.value))
-    #dut._log.info("Z:%s", ToHex(dut.my_datapath.Z.value))
-    #dut._log.info("CarryIN:%s", ToHex(dut.my_datapath.CarryIN.value))
-    #dut._log.info("ShiftControl:%s", ToHex(dut.my_datapath.ShiftControl.value))
-    #dut._log.info("shamt:%s", ToHex(dut.my_datapath.shamt.value))
-    #dut._log.info("PC:%s", ToHex(dut.my_datapath.PC.value))
-    #dut._log.info("Instruction:%s", ToHex(dut.my_datapath.Instruction.value))
+    dut._log.info("RegWrite:%s", ToHex(dut.dp.RegWrite.value))
+    dut._log.info("Result:%s", ToHex(dut.dp.Result.value))
+
 
 def Log_Controller(dut,logger):
     #Log whatever signal you want from the controller, called before positive clock edge
