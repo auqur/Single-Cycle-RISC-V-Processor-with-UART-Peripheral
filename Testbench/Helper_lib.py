@@ -75,8 +75,8 @@ class Instruction:
         logger.debug("rd:%d", self.rd)
         logger.debug("rs1:%d", self.rs1)
         logger.debug("rs2:%d", self.rs2)
-        logger.debug("funct3:%d", self.funct3)
-        logger.debug("funct7:%d", self.funct7)
+        logger.debug("funct3:%s", self.funct3)
+        logger.debug("funct7:%s", self.funct7)
         logger.debug("imm: %d", self.imm)
         logger.debug("*************************************")
         
