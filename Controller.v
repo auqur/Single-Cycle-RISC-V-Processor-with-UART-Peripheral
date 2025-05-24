@@ -1,11 +1,11 @@
 module Controller
 (
-    input clk, reset,
-    input Zero,
-    input [31:0] Instr, RF_OUT1, RF_OUT2, ImmExt
+    input wire clk, reset,
+    input wire Zero,
+    input wire [31:0] Instr, RF_OUT1, RF_OUT2, ImmExt
 
 
-    output wire PCSrc, RegWrite, ALUSrc, ResultSrc, RF_WD_SRC,
+    output wire PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
     output wire [1:0] MemWrite, ALUSrc,
     output reg [2:0] ImmSrc,
     output wire [3:0] ALUControl
@@ -104,20 +104,36 @@ assign PCSrc = (op == JAL_INSTR | op == JALR_INSTR) ? 1'b1 :
                                       (funct3 == BGEU) ? GEU : 1'b0) :
                 1'b0;
 
+//RegWrite
+assign RegWrite = (op == REG_REG_INSTR | op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR | op == JALR_INSTR);
+
+//ResultSrc
+assign ResultSrc = (op == MEM_LOAD_INSTR);
+ 
+//RF_WD_SRC
+assign RF_WD_SRC = (op == JAL_INSTR | op == JALR_INSTR);
+
+//MemWrite
+assign MemWrite = (op == MEM_STORE_INSTR) ? 
+                  ((funct3 == SB) ? 2'b01 : 
+                   (funct3 == SH) ? 2'b10 : 
+                   (funct3 == SW) ? 2'b11 : 2'b00) : 
+                  2'b00;
+
+//ImmSrc
+assign ImmSrc = (op == REG_IMM_INSTR & funct3 == SLTIU) ? 3'b001 :  //UEX12
+                (op == BRANCH_INSTR ) ? 3'b010 :    //B_IMM
+                (op == JAL_INSTR) ? 3'b011 : //JALEX
+                (op == LUI_INSTR | op == AUIPC_INSTR) ? 3'b100 : //U_IMM
+                3'b000; //default is SEX12
+
 //ALUSrc
 assign ALUSrc[0] = ((op == BRANCH_INSTR) | (op == AUIPC_INSTR) | (op == JAL_INSTR));
-assign ALUSrc[1] = (op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == MEM_STORE_INSTR | op == JALR_INSTR | op == BRANCH_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR) ? 1'b1 :
-                    1'b0;
-
-//RegWrite
-assign RegWrite = (op == REG_REG_INSTR | op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == LUI_INSTR | op == AUIPC_INSTR) ? 1'b1 :
-                1'b0;
+assign ALUSrc[1] = (op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == MEM_STORE_INSTR | op == JALR_INSTR | op == BRANCH_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR);
 
 //ALUControl
-assign ALUContro[3:1] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? funct3 :
-                        3'b0;
-assign ALUControl[0] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? (funct7 == 7'b0100000) :
-                        1'b0;
+assign ALUContro[3:1] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? funct3 : 3'b0;
+assign ALUControl[0] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? (funct7 == 7'b0100000) : 1'b0;
 
 
 

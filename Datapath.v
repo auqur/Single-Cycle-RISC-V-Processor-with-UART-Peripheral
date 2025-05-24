@@ -1,7 +1,7 @@
 module Datapath
 (
     input clk, reset,
-    inout PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
+    input PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
     input [1:0] MemWrite, shctrl, ALUSrc,
     input [2:0] ImmSrc,
     input [3:0] ALUControl,
@@ -79,7 +79,7 @@ Extender extender
 
 Mux_2to1 #(32) SrcAMux
 (
-    .select(AL,USrc[0]),
+    .select(ALUSrc[0]),
     .input_0(RF_OUT1),
     .input_1(PC),
     .output_value(SrcA)
