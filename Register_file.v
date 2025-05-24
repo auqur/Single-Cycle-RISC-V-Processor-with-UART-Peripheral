@@ -15,7 +15,7 @@ module Register_file #(parameter WIDTH = 32)(
 wire [WIDTH-1:0] Reg_Out [31:0];
 wire [31:0] Reg_enable;
 
-Register_rsten #(WIDTH) Reg0 (.clk(clk), .reset(reset), .we(0), .DATA(DATA), .OUT(Reg_Out[0]));
+Register_rsten #(WIDTH) Reg0 (.clk(clk), .reset(reset), .we(1'b0), .DATA(DATA), .OUT(Reg_Out[0]));
 
 genvar i;
 generate

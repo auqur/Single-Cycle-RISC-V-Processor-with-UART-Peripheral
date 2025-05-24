@@ -2,12 +2,11 @@ module Controller
 (
     input wire clk, reset,
     input wire Zero,
-    input wire [31:0] Instr, RF_OUT1, RF_OUT2, ImmExt
-
+    input wire [31:0] Instr, RF_OUT1, RF_OUT2,
 
     output wire PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
     output wire [1:0] MemWrite, ALUSrc,
-    output reg [2:0] ImmSrc, READMODE,
+    output wire [2:0] ImmSrc, READMODE,
     output wire [3:0] ALUControl
 );
 
@@ -75,15 +74,6 @@ assign rs2 = Instr[24:20];
 assign funct3 = Instr[14:12];
 assign funct7 = Instr[31:25];
 
-initial begin
-    PCSrc = 1'b0;
-    RegWrite = 1'b0;
-    ALUSrc = 1'b0;
-    ResultSrc = 1'b0;
-    MemWrite = 2'b00;
-    ImmSrc = 3'b000;
-    ALUControl = 4'b0000;
-end
 
 //Comparator
 wire EQ, NE, LT, GE, LTU, GEU;
@@ -141,9 +131,8 @@ assign ALUSrc[0] = ((op == BRANCH_INSTR) | (op == AUIPC_INSTR) | (op == JAL_INST
 assign ALUSrc[1] = (op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == MEM_STORE_INSTR | op == JALR_INSTR | op == BRANCH_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR);
 
 //ALUControl
-assign ALUContro[3:1] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? funct3 : 3'b0;
-assign ALUControl[0] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? (funct7 == 7'b0100000) : 1'b0;
-
-
+assign ALUControl[3:1] = (op == REG_REG_INSTR | op == REG_IMM_INSTR ) ? funct3 : 3'b0;
+assign ALUControl[0] = (op == REG_REG_INSTR | op == REG_IMM_INSTR ) ? (funct7 == 7'b0100000) : 1'b0;
 
 endmodule
+//iverilog -o Controller.out Controller.v

@@ -1,19 +1,19 @@
 module Datapath
 (
-    input clk, reset,
-    input PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
-    input [1:0] MemWrite, shctrl, ALUSrc,
-    input [2:0] ImmSrc, READMODE,
-    input [3:0] ALUControl,
-    input [4:0] Debug_Source_select,
+    input wire clk, reset,
+    input wire PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
+    input wire [1:0] MemWrite, shctrl, ALUSrc,
+    input wire [2:0] ImmSrc, READMODE,
+    input wire [3:0] ALUControl,
+    input wire [4:0] Debug_Source_select,
 
-    output Zero,
-    output [31:0] PC, Instr,
-    output [31:0] Debug_out,  RF_OUT1, RF_OUT2, ImmExt
+    output wire Zero,
+    output wire [31:0] PC, Instr,
+    output wire [31:0] Debug_out,  RF_OUT1, RF_OUT2
 );
 
 wire [31:0] PCNext, PCPlus4, PCTarget, RF_WD;
-wire [31:0] SrcA, SrcB,;
+wire [31:0] SrcA, SrcB, ImmExt;
 wire [31:0] ReadData;
 wire [31:0] Result;
 wire [31:0] ALUResult;
@@ -108,11 +108,11 @@ Memory #(4, 32) Data_Memory
     .WE(MemWrite),
     .READMODE(READMODE),
     .ADDR(ALUResult),
-    .WD(WriteData),
+    .WD(RF_OUT2),
     .RD(ReadData)
 );
 
-Mux_2to1 #(32) WriteData_Mux
+Mux_2to1 #(32) Result_Mux
 (
     .select(ResultSrc),
     .input_0(ALUResult),
@@ -121,3 +121,4 @@ Mux_2to1 #(32) WriteData_Mux
 );
 
 endmodule
+//iverilog -o Datapath.out Datapath.v Mux_2to1.v Register_file.v Register_reset.v Register_rsten.v Adder.v Extender.v ALU.v Memory.v Instruction_memory.v
