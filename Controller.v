@@ -2,13 +2,13 @@ module Controller
 (
     input clk, reset,
     input Zero,
-    input [31:0] Instr,
+    input [31:0] Instr, RF_OUT1, RF_OUT2, ImmExt
 
 
-    output reg PCSrc, RegWrite, ALUSrc, ResultSrc,
-    output reg [1:0] MemWrite,
+    output wire PCSrc, RegWrite, ALUSrc, ResultSrc, RF_WD_SRC,
+    output wire [1:0] MemWrite, ALUSrc,
     output reg [2:0] ImmSrc,
-    output reg [3:0] ALUControl
+    output wire [3:0] ALUControl
 );
 
 
@@ -21,7 +21,6 @@ localparam  LUI_INSTR       = 7'b0110111,
             MEM_LOAD_INSTR  = 7'b0000011,
             REG_IMM_INSTR   = 7'b0010011,
             MEM_STORE_INSTR = 7'b0100011,
-            CNST_SHFT_INSTR = 7'b0010011,
             REG_REG_INSTR   = 7'b0110011;
 
 //f3
@@ -86,10 +85,38 @@ initial begin
     ALUControl = 4'b0000;
 end
 
+//Comparator
+wire EQ, NE, LT, GE, LTU, GEU;
+assign EQ = (RF_OUT1 == RF_OUT2);
+assign NE = (RF_OUT1 != RF_OUT2);
+assign LT = ($signed(RF_OUT1) < $signed(RF_OUT2));
+assign GE = ($signed(RF_OUT1) >= $signed(RF_OUT2));
+assign LTU = (RF_OUT1 < RF_OUT2);
+assign GEU = (RF_OUT1 >= RF_OUT2);
+
+//PCSrc
+assign PCSrc = (op == JAL_INSTR | op == JALR_INSTR) ? 1'b1 :
+               (op == BRANCH_INSTR) ? ((funct3 == BEQ) ? EQ :
+                                      (funct3 == BNE) ? NE :
+                                      (funct3 == BLT) ? LT :
+                                      (funct3 == BGE) ? GE :
+                                      (funct3 == BLTU) ? LTU :
+                                      (funct3 == BGEU) ? GEU : 1'b0) :
+                1'b0;
+
+//ALUSrc
+assign ALUSrc[0] = ((op == BRANCH_INSTR) | (op == AUIPC_INSTR) | (op == JAL_INSTR));
+assign ALUSrc[1] = (op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == MEM_STORE_INSTR | op == JALR_INSTR | op == BRANCH_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR) ? 1'b1 :
+                    1'b0;
+
+//RegWrite
+assign RegWrite = (op == REG_REG_INSTR | op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == LUI_INSTR | op == AUIPC_INSTR) ? 1'b1 :
+                1'b0;
+
 //ALUControl
-assign ALUContro[3:1] = (op == REG_REG_INST | op == REG_IMM_INSTR | op == CNST_SHFT_INSTR ) ? funct3 :
+assign ALUContro[3:1] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? funct3 :
                         3'b0;
-assign ALUControl[0] = (op == REG_REG_INST | op == REG_IMM_INSTR | op == CNST_SHFT_INSTR ) ? (funct7 == 7'b0100000) :
+assign ALUControl[0] = (op == REG_REG_INST | op == REG_IMM_INSTR ) ? (funct7 == 7'b0100000) :
                         1'b0;
 
 
