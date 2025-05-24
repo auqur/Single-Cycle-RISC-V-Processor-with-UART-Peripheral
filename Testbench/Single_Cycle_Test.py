@@ -11,7 +11,7 @@
 # ==============================================================================
 import logging
 import cocotb
-from Helper_lib import read_file_to_list,Instruction,rotate_right, shift_helper, ByteAddressableMemory,reverse_hex_string_endiannes
+from Helper_lib import read_file_to_list,Instruction,rotate_right, shift_helper, ByteAddressableMemory,reverse_hex_string_endiannes, extend_to_32bit
 from Helper_Student import Log_Datapath,Log_Controller
 from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, Edge, Timer
@@ -83,8 +83,8 @@ class TB:
 
         if(execute_flag):
             if (inst_fields.op == "0110011"):
-                R1 = self.Register_File[inst_fields.rs1]
-                R2 = self.Register_File[inst_fields.rs2]
+                R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
+                R2 = extend_to_32bit(self.Register_File[inst_fields.rs2], 32, signed=True)
                 shamt = R2 & 0x1F
                 if (inst_fields.funct7 == "0000000"):
                     match inst_fields.funct3:
@@ -131,7 +131,7 @@ class TB:
                     self.logger.debug("Unknown funct7 (%s) value for op (%s)", inst_fields.funct7, inst_fields.op)
 
             elif (inst_fields.op == "0010011"):
-                R1 = self.Register_File[inst_fields.rs1]
+                R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
                 Imm = inst_fields.imm
                 shamt = inst_fields.rs2
                 match inst_fields.funct3:
@@ -170,40 +170,33 @@ class TB:
                         self.Register_File[inst_fields.rd] = result
     
             elif (inst_fields.op == "0000011"):
-                R1 = self.Register_File[inst_fields.rs1]
+                R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
                 Imm = inst_fields.imm
                 match inst_fields.funct3:
                     case "000": # LB
                         offset = R1 + Imm
-                        result = self.memory.read_byte(offset)
-                        result = int.from_bytes(result, byteorder='little')
-                        result = sign_extend(result, 8)
+                        result = self.memory.read_byte(offset, signed=True)
                         self.Register_File[inst_fields.rd] = result
                     case "001": # LH
                         offset = R1 + Imm
-                        result = self.memory.read_halfword(offset)
-                        result = int.from_bytes(result, byteorder='little')
-                        result = sign_extend(result, 16)
+                        result = self.memory.read_halfword(offset, signed=True)
                         self.Register_File[inst_fields.rd] = result
                     case "010": # LW
                         offset = R1 + Imm
                         result = self.memory.read_word(offset)
-                        result = int.from_bytes(result, byteorder='little')
                         self.Register_File[inst_fields.rd] = result
                     case "100": # LBU
                         offset = R1 + Imm
-                        result = self.memory.read_byte(offset)
-                        result = int.from_bytes(result, byteorder='little')
+                        result = self.memory.read_byte(offset, signed=False)
                         self.Register_File[inst_fields.rd] = result 
                     case "101": # LHU
                         offset = R1 + Imm
-                        result = self.memory.read_halfword(offset)
-                        result = int.from_bytes(result, byteorder='little')
+                        result = self.memory.read_halfword(offset, signed=False)
                         self.Register_File[inst_fields.rd] = result
                     
             elif (inst_fields.op == "0100011"):
-                R1 = self.Register_File[inst_fields.rs1]
-                R2 = self.Register_File[inst_fields.rs2]
+                R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
+                R2 = extend_to_32bit(self.Register_File[inst_fields.rs2], 32, signed=True)
                 Imm = inst_fields.imm
                 match inst_fields.funct3:
                     case "000": # SB
@@ -220,8 +213,8 @@ class TB:
                         self.memory.write_word(offset, data)
                         
             elif (inst_fields.op == "1100011"):
-                R1 = self.Register_File[inst_fields.rs1]
-                R2 = self.Register_File[inst_fields.rs2]
+                R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
+                R2 = extend_to_32bit(self.Register_File[inst_fields.rs2], 32, signed=True)
                 Imm = inst_fields.imm
                 R1_Signed = to_signed32(R1)
                 R2_Signed = to_signed32(R2)
@@ -260,7 +253,7 @@ class TB:
                 self.PC = self.PC - 4 + Imm
                 
             elif (inst_fields.op == "1100111"): # JALR
-                R1 = self.Register_File[inst_fields.rs1]
+                R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
                 Imm = inst_fields.imm
                 result = R1 + Imm
                 self.Register_File[inst_fields.rd] = self.PC

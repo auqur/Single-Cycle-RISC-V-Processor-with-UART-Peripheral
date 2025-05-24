@@ -4,18 +4,19 @@ def read_file_to_list(filename):
         lines = [line.strip() for line in lines]
     return lines
 
-def zero_extend_lsb(bin_str):
-    extended = bin_str.ljust(32, '0')
-    return extended
+def extend_to_32bit(value, original_bits, signed=False):
+    if signed:
+        sign_bit = 1 << (original_bits - 1)
+        return (value & (sign_bit - 1)) - (value & sign_bit)
+    else:
+        return value & ((1 << original_bits) - 1)
 
-def sign_extend(value, bits):
-    sign_bit = value[0]
-    return sign_bit * (32 - bits) + value
-
-def to_signed32(val):
-    val = val & 0xFFFFFFFF  # Mask to 32 bits
-    return val if val < 0x80000000 else val - 0x100000000
-
+def zero_extend_lsb(value):
+    bits = len(value)
+    result = value + '0' * (32 - bits)
+    result = int(result, 2)
+    result = extend_to_32bit(result, 32, signed=True)
+    return result
 
 class Instruction:
     def __init__(self, instruction):
@@ -30,28 +31,29 @@ class Instruction:
 
         def _I_Imm():
             imm = self.binary_instr[(31-31):(32-20)]
-            return sign_extend(imm, 12)
-
+            imm = extend_to_32bit(int(imm, 2), 12, signed=True)
+            return imm
+        
         def _S_Imm():
             imm = self.binary_instr[(31-31):(32-25)] + self.binary_instr[(31-11):(32-7)]
-            imm = sign_extend(imm, 12)
-            print("S_Imm1: ", imm)
-            imm = to_signed32(int(imm, 2))
-            print("S_Imm2: ", imm)
+            imm = extend_to_32bit(int(imm, 2), 12, signed=True)
             return imm
         
         def _B_Imm():
             imm = self.binary_instr[(31-31)] + self.binary_instr[(31-7)] + self.binary_instr[(31-30):(32-25)] + self.binary_instr[(31-11):(32-8)] + '0'
-            return sign_extend(imm, 13)
-        
+            imm = extend_to_32bit(int(imm, 2), 13, signed=True)
+            return imm
+
         def _U_Imm():
             imm = self.binary_instr[(31-31):(32-12)]
-            return zero_extend_lsb(imm)
+            imm = zero_extend_lsb(imm)
+            return imm
         
         def _J_Imm():
             imm = self.binary_instr[(31-31)] + self.binary_instr[(31-19):(32-12)] + self.binary_instr[(31-20)] + self.binary_instr[(31-30):(32-25)] + + self.binary_instr[(31-24):(32-21)] + '0'
-            return sign_extend(imm, 21)
-        
+            imm = extend_to_32bit(int(imm, 2), 21, signed=True)
+            return imm
+    
         if self.op in ['1100111', '0000011', '0010011', '0010011']:
             self.imm = _I_Imm()
         elif self.op in ['0110111','0010111']:
@@ -63,9 +65,8 @@ class Instruction:
         elif self.op in ['0100011']:
             self.imm = _S_Imm()
         else:
-            self.imm = "0"
-            
-        self.imm = int(self.imm, 2)
+            self.imm = 0
+
         
     def log(self,logger):
         logger.debug("****** Current Instruction *********")
@@ -115,19 +116,24 @@ class ByteAddressableMemory:
         if address < 0 or address + 4 > self.size:
             raise ValueError("Invalid memory address or length")
         return_val = bytes(self.memory[address : address + 4])
-        print("Read word: ", return_val)
+        return_val = int.from_bytes(return_val, byteorder='little')
+        return_val = extend_to_32bit(return_val, 32, signed=True)
         return return_val   
 
-    def read_halfword(self, address):
+    def read_halfword(self, address, signed=True):
         if address < 0 or address + 2 > self.size:
             raise ValueError("Invalid memory address or length")
         return_val = bytes(self.memory[address : address + 2])
+        return_val = int.from_bytes(return_val, byteorder='little')
+        return_val = extend_to_32bit(return_val, 16, signed=signed)
         return return_val
     
-    def read_byte(self, address):
+    def read_byte(self, address, signed=True):
         if address < 0 or address >= self.size:
             raise ValueError("Invalid memory address")
-        return_val = bytes(self.memory[address])
+        return_val = bytes(self.memory[address: address + 1])
+        return_val = int.from_bytes(return_val, byteorder='little')
+        return_val = extend_to_32bit(return_val, 8, signed=signed)
         return return_val
     
     def write_word(self, address, data):
