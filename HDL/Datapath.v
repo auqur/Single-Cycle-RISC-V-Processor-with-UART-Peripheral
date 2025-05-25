@@ -142,8 +142,18 @@ wire [7:0] UART_TX_DATA;
 
 assign UART_TX_DATA = RF_OUT2[7:0];
 
-
-
+UART uartinstance
+(
+    .UART_CLK(UART_CLK),
+    .BUTTON_CLK(clk),
+    .reset(reset),
+    .rx(UART_RX),              // Serial input line from external device
+    .tx_start(UART_WRITE_EN),
+    .tx_data(UART_TX_DATA),
+    .read_rx(UART_READ_EN),         // Reading request from PC
+    .output_data(UART_READ_DATA),
+    .tx(UART_TX)              // Serial output line to external device 
+);
 
 
 

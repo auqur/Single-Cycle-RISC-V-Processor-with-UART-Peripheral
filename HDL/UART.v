@@ -1,14 +1,13 @@
-module uart_peripheral (
-    input         clk,
+module UART (
+    input         UART_CLK,
+    input         BUTTON_CLK,
     input         reset,
     input         rx,              // Serial input line from external device
     input         tx_start,
     input  [7:0]  tx_data,
     input         read_rx,         // Reading request from PC
-    input  [15:0] clk_per_bit,     // Clock cycles per bit
     output [31:0]  output_data,
-    output        tx,              // Serial output line to external device
-    output        tx_busy
+    output        tx           // Serial output line to external device
 );
 
 
@@ -19,18 +18,18 @@ module uart_peripheral (
     wire [7:0] rx_byte;
 
     // UART RX instance
-    uart_rx rx_inst (
-        .clk(clk),
+    UART_RX rx_inst (
+        .UART_CLK(UART_CLK),
         .reset(reset),
         .rx(rx),
-        .clk_per_bit(clk_per_bit),
         .rx_ready(rx_ready),
         .rx_data(rx_byte)
     );
 
     // FIFO buffer for RX
-    fifo_buffer_16 rx_fifo (
-        .clk(clk),
+    UART_FIFO_BUFFER rx_fifo (
+        .UART_CLK(UART_CLK),
+        .BUTTON_CLK(BUTTON_CLK),
         .reset(reset),
         .write_req(rx_ready),
         .write_data(rx_byte),
@@ -42,14 +41,12 @@ module uart_peripheral (
     assign output_data = (lowword) ? 32'hFFFFFFFF : {24'b0, fifo_read_data};
 
     // UART TX instance
-    uart_tx tx_inst (
-        .clk(clk),
+    UART_TX tx_inst (
+        .UART_CLK(UART_CLK),
         .reset(reset),
         .tx_start(tx_start),
         .tx_data(tx_data),
-        .clk_per_bit(clk_per_bit),
-        .tx(tx),
-        .tx_busy(tx_busy)
+        .tx(tx)
     );
 
 endmodule

@@ -1,5 +1,6 @@
 module UART_FIFO_BUFFER (
-    input        clk,
+    input        UART_CLK,
+    input        BUTTON_CLK,
     input        reset,
     input        write_req,      
     input  [7:0] write_data,
@@ -13,18 +14,19 @@ module UART_FIFO_BUFFER (
     reg [3:0] write_pointer = 0;          
     reg [4:0] count = 0;         
 
-    always @(posedge clk) begin
+    always @(posedge UART_CLK) begin
         if (reset) begin
             write_pointer <= 0;
             count <= 0;
-        end else if (write_req & (count < 4'hF)) begin
+        end 
+        else if (write_req & (count <= 4'hF)) begin
             buffer[write_pointer] <= write_data;
             write_pointer <= write_pointer + 1;
             count <= count + 1;
         end
     end
 
-    always @(posedge clk) begin
+    always @(posedge BUTTON_CLK) begin
         if (reset) begin
             read_pointer <= 0;
         end else if (read_req) begin
@@ -34,7 +36,7 @@ module UART_FIFO_BUFFER (
     end
 
     assign read_data = buffer[read_pointer];
-    assign lowword = ~(read_pointer < write_pointer)
+    assign lowword = ~(read_pointer < write_pointer);
 
 
 endmodule
