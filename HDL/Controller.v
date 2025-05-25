@@ -115,6 +115,7 @@ assign ImmSrc = (op == REG_IMM_INSTR & funct3 == SLTIU) ? 3'b001 :  //UEX12
                 (op == BRANCH_INSTR ) ? 3'b010 :    //B_IMM
                 (op == JAL_INSTR) ? 3'b011 : //JALEX
                 (op == LUI_INSTR | op == AUIPC_INSTR) ? 3'b100 : //U_IMM
+                (op == MEM_STORE_INSTR) ? 3'b101 : // S_IMM
                 3'b000; //default is SEX12
 
 //READMODE
