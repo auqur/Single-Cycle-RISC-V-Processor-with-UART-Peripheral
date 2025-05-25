@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1748200037" />
-    <testcase name="RISCV_Test" classname="RISCV-32I_Test" file="/home/auqur/Desktop/ee446/Testbench/RISCV-32I_Test.py" lineno="293" time="0.03653407096862793" sim_time_ns="490000.001" ratio_time="13412137.985410018" />
-  </testsuite>
-</testsuites>
