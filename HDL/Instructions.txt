@@ -1,0 +1,61 @@
+addi r1, r0, 5 			
+slli r2, r1, 2 			
+xor r3, r1, r2 			
+sub r4, r3, r2 			
+sll r5, r4, r1 			
+auipc r6, 0	   			
+srai r7, r2, 1 			
+or r8, r7, r5  			
+andi r9, r6, 4 			
+slt r10, r5, r6			
+sb r1, 0xA0(r0)		
+bne r2, r6, 16			
+beq r2, r6, 16			
+nop  
+add r2, r3, r4			
+nop  
+add r2, r6, r8			
+sb r2, 0(r7)			
+lb r12, 0(r7) 			
+lbu r13, 0(r7)			
+bltu r12, r13, 16		
+blt r12, r13, 16		
+nop
+nop  
+jal r30, -96			
+jal r30, 12				
+nop
+nop  
+sra r14, r5, r1 		
+srl r15, r5, r1 		
+bge r14, r15, 12		
+bgeu r14, r15, 12		
+nop  
+jal r30, -132 			
+sh r15, 0(r6)			
+sw r15, 0(r9) 			
+lhu r16, 0(r6)			
+lh r17, 0(r9)			
+lui r18, 0xFFFF0000		
+and r19, r15, r18		
+slti r20, r19, 0x800 	
+sltiu r21, r19, 0x800	
+ori r22, r21, 0x0FE 	
+xori r23, r22, 0x0AA	
+jalr r31, r13, 0x002	
+nop  
+nop 
+nop 
+srli r24, r23, 0x002	
+sltu r11, r5, r6
+addi r1, r0, 65
+addi r2, r0, 0x82
+addi r3, r0, 66
+addi r4, r0, 0x42		
+addi r5, r0, 5			
+sb r1, 0x400(r0)
+sb r2, 0x400(r0)
+sb r3, 0x400(r0)
+sb r4, 0x400(r0)
+lw r26, 0x404(r0)
+addi r5, r0, 38	
