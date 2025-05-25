@@ -11,18 +11,15 @@ module UART_FIFO_BUFFER (
 
     reg [7:0] buffer [0:15];   
     reg [3:0] read_pointer = 0;          
-    reg [3:0] write_pointer = 0;          
-    reg [4:0] count = 0;         
+    reg [3:0] write_pointer = 0;                
 
     always @(posedge UART_CLK) begin
         if (reset) begin
             write_pointer <= 0;
-            count <= 0;
         end 
-        else if (write_req & (count <= 4'hF)) begin
+        else if (write_req) begin
             buffer[write_pointer] <= write_data;
             write_pointer <= write_pointer + 1;
-            count <= count + 1;
         end
     end
 
@@ -31,7 +28,6 @@ module UART_FIFO_BUFFER (
             read_pointer <= 0;
         end else if (read_req) begin
             read_pointer <= read_pointer + 1;
-            count <= count - 1;
         end
     end
 
