@@ -10,7 +10,7 @@ localparam 	SEX12 = 3'b000,
             B_IMM = 3'b010,
             JALEX = 3'b011,
             U_IMM = 3'b100,
-            S_IMM = 3'b101; // S_IMM is not used in this module, but can be defined for completeness
+            S_IMM = 3'b101;
 
 always @(*) begin
     case (select)
@@ -25,7 +25,7 @@ always @(*) begin
 
         U_IMM: Extended_data = {DATA[31:12], 12'b0};
 
-        S_IMM: Extended_data = {{21{DATA[31]}}, DATA[30:25], DATA[11:7]}; // S_IMM is not used in this module, but can be defined for completeness
+        S_IMM: Extended_data = {{21{DATA[31]}}, DATA[30:25], DATA[11:7]};
         
         default: Extended_data = 32'd0;
     endcase

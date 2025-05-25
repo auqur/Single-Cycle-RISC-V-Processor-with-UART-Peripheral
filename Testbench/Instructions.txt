@@ -27,5 +27,19 @@ beq x11, x10, 8
 addi x1, x0, 17
 blt x10, x11, 100
 bgeu x3, x5, 8
-addi x1, x0, 17 //pc = 116
+addi x1, x0, 17 
 auipc x12, 1 // x12 = 125
+jal x24, 8 // x24 = 128
+addi x1, x0, 17 
+jalr x25, x24, 12 //x25 = 136
+addi x1, x0, 17
+sw x6, x0, 0
+lh x14, x10, 0 // x14 = 16
+lw x15, x11, 0x403 // x15 = -1
+sb x15, 4 // M[4] = -1
+lb x16, 4 // x16 = -1
+addi x17, x0, 0xc // x17 = 0x8c
+sh x17, 8 
+lhu x18, 8 // x17 = 0x8C = 136
+lb x19, 8 // x19 = -116
+lbu x20, 8 // x20 = 140
