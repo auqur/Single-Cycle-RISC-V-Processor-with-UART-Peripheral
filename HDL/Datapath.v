@@ -77,10 +77,10 @@ Register_file #(32) Register_File
     .clk(clk),
     .write_enable(RegWrite),
     .reset(reset),
-    .Source_select_0(Instr[19:15]), //rs1
-    .Source_select_1(Instr[24:20]), //rs2
+    .Source_select_0(Instr[19:15]),             //rs1
+    .Source_select_1(Instr[24:20]),             //rs2
     .Debug_Source_select(Debug_Source_select),
-    .Destination_select(Instr[11:7]), //rd
+    .Destination_select(Instr[11:7]),           //rd
     .DATA(RF_WD),
     .out_0(RF_OUT1),
     .out_1(RF_OUT2),
@@ -147,12 +147,12 @@ UART uartinstance
     .UART_CLK(UART_CLK),
     .BUTTON_CLK(clk),
     .reset(reset),
-    .rx(UART_RX),              // Serial input line from external device
+    .rx(UART_RX),                   // Serial input line from external device
     .tx_start(UART_WRITE_EN),
     .tx_data(UART_TX_DATA),
-    .read_rx(UART_READ_EN),         // Reading request from PC
+    .read_rx(UART_READ_EN),         // Read request from PC
     .output_data(UART_READ_DATA),
-    .tx(UART_TX)              // Serial output line to external device 
+    .tx(UART_TX)                    // Serial output line to external device 
 );
 
 

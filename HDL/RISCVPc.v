@@ -37,11 +37,11 @@ Datapath dp (
     .RF_OUT1(RF_OUT1),
     .RF_OUT2(RF_OUT2),
     .ALUResult(ALUResult),
-    .UART_CLK(UART_CLK), // Assuming UART_CLK is same as clk
-    .UART_RX(UART_RX), // Placeholder for UART_RX, can be connected to actual RX line
-    .UART_READ_EN(UART_READ_EN), // Placeholder for UART read enable
-    .UART_WRITE_EN(UART_WRITE_EN), // Placeholder for UART write enable
-    .UART_TX(UART_TX) // Placeholder for UART TX, can be connected to actual TX line
+    .UART_CLK(UART_CLK), 
+    .UART_RX(UART_RX), 
+    .UART_READ_EN(UART_READ_EN), 
+    .UART_WRITE_EN(UART_WRITE_EN), 
+    .UART_TX(UART_TX)
 );
 
 Controller ctrl (

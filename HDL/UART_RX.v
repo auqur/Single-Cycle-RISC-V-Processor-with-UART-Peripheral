@@ -17,7 +17,7 @@ module UART_RX (
         clk_count = 14'b00000000000000;
     end
 
-    localparam clk_by_baudrate = 10416;
+    localparam clk_by_baudrate = 10416;     // Clock cycles for 100 MHz clock and 9600 baudrate
 
     always @(posedge UART_CLK or posedge reset) begin
         if (reset) begin
@@ -38,7 +38,7 @@ module UART_RX (
                     end
                 end
 
-                2'b01: begin    // Start bit state. Waiting for the start bit to stabilize
+                2'b01: begin    // Start State, if start is detected. It moves to next state
                     if (clk_count == 0) begin
                         if (rx == 0) begin 
                             fsm <= 2'b10;
@@ -54,7 +54,7 @@ module UART_RX (
                     end
                 end
 
-                2'b10: begin    // Data bit state. Collecting data bits
+                2'b10: begin    // Data Read State where it reads data from RX line
                     if (clk_count == 0) begin
                         shift_reg[bit_index] <= rx;
                         clk_count <= clk_by_baudrate - 1;
@@ -69,7 +69,7 @@ module UART_RX (
                     end
                 end
 
-                2'b11: begin    // Stop bit state. Waiting for the stop bit
+                2'b11: begin    // Stop State. If stop bit detected returns to Idle state
                     if (clk_count == 0) begin
                         if (rx == 1) begin 
                             rx_data <= shift_reg;

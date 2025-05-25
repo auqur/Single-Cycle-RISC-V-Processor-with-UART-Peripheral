@@ -34,6 +34,6 @@ module UART_FIFO_BUFFER (
     end
 
     assign read_data = buffer[read_pointer];
-    assign lowword = ~(read _pointer < write_pointer);
+    assign lowword = ~(read_pointer < write_pointer);
 
 endmodule

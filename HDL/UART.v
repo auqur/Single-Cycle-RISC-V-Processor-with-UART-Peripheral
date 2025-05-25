@@ -50,6 +50,8 @@ module UART (
         .lowword(lowword)
     );
 
+    // Output data assignment with lowword check
+    // If lowword is true, output 32'hFFFFFFFF, otherwise output the FIFO read data byte
     assign output_data = (lowword) ? 32'hFFFFFFFF : {24'b0, fifo_read_data};
 
     // UART TX instance
