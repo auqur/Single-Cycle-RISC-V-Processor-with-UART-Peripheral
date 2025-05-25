@@ -55,7 +55,7 @@ class TB:
     #Compares and lgos the PC and register file of Python module and HDL design
     def compare_result(self):
         self.logger.debug("************* Performance Model / DUT Data  **************")
-        self.logger.debug("PC:%d \t PC:%d",self.PC,self.dut_PC.value.integer)
+        self.logger.debug("Current PC:%d \t PC:%d",self.PC,self.dut_PC.value.integer)
         
         for i in range(32):
             ref_val = to_signed32(self.Register_File[i])
