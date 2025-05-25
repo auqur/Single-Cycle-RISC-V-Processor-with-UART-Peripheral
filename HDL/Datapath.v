@@ -9,7 +9,14 @@ module Datapath
 
     output  Zero,
     output  [31:0] PC, Instr,
-    output  [31:0] Debug_out,  RF_OUT1, RF_OUT2
+    output  [31:0] Debug_out,  RF_OUT1, RF_OUT2,
+
+    output  [31:0] ALUResult, // i.e Memory address
+
+    input UART_CLK,
+    input UART_RX,
+    input UART_READ_EN, UART_WRITE_EN,
+    output UART_TX
 );
 
 wire [31:0] PCNext, PCPlus4, PCTarget, RF_WD;
@@ -47,11 +54,21 @@ Inst_Memory #(4,32) Instruction_Memory
     .RD(Instr)
 );
 
+
+wire [31:0] RF_DATA_TEMP;
 Mux_2to1 #(32) RF_DATA_MUX
 (
     .select(RF_WD_SRC),
     .input_0(Result),
     .input_1(PCPlus4),
+    .output_value(RF_DATA_TEMP)
+);
+
+Mux_2to1 #(32) UART_RF_DATA_MUX
+(
+    .select(UART_READ_EN),
+    .input_0(RF_DATA_TEMP),
+    .input_1(UART_READ_DATA),
     .output_value(RF_WD)
 );
 
@@ -120,5 +137,18 @@ Mux_2to1 #(32) Result_Mux
     .output_value(Result)
 );
 
+wire [31:0] UART_READ_DATA;
+wire [7:0] UART_TX_DATA;
+
+assign UART_TX_DATA = RF_OUT2[7:0];
+
+
+
+
+
+
+
 endmodule
+
+
 //iverilog -o Datapath.out Datapath.v Mux_2to1.v Register_file.v Register_reset.v Register_rsten.v Adder.v Extender.v ALU.v Memory.v Instruction_memory.v

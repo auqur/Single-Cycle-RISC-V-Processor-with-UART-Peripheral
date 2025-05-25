@@ -14,7 +14,7 @@ module UART_FIFO_BUFFER (
     reg [3:0] write_pointer = 0;          
     reg [4:0] count = 0;         
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             write_pointer <= 0;
             count <= 0;
@@ -25,7 +25,7 @@ module UART_FIFO_BUFFER (
         end
     end
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             read_pointer <= 0;
         end else if (read_en && !empty) begin
