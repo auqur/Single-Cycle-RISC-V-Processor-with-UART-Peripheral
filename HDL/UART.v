@@ -9,13 +9,25 @@ module UART (
     output [31:0]  output_data,
     output        tx           // Serial output line to external device
 );
-
-
     wire        lowword;
     wire [7:0]  fifo_read_data;
 
     wire rx_ready;
     wire [7:0] rx_byte;
+
+    reg tx_start_prev;
+    wire tx_start_rising;
+    
+    //For transmitting one data per instruction
+    always @(posedge UART_CLK or posedge reset) begin
+        if (reset) begin
+            tx_start_prev <= 0;
+        end else begin
+            tx_start_prev <= tx_start;
+        end
+    end
+
+    assign tx_start_rising = tx_start & ~tx_start_prev;
 
     // UART RX instance
     UART_RX rx_inst (
@@ -44,7 +56,7 @@ module UART (
     UART_TX tx_inst (
         .UART_CLK(UART_CLK),
         .reset(reset),
-        .tx_start(tx_start),
+        .tx_start(tx_start_rising),
         .tx_data(tx_data),
         .tx(tx)
     );
