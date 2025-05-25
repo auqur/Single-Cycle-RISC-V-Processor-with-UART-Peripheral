@@ -89,30 +89,33 @@ def decode_and_print_instruction(inst_fields):
 def Log_Datapath(dut,logger):
     #Log whatever signal you want from the datapath, called before positive clock edge
     logger.debug("************ DUT DATAPATH Signals ***************")
-    dut._log.info("RegWrite:%s", ToHex(dut.dp.RegWrite.value))
-    dut._log.info("Result:%s", ToHex(dut.dp.Result.value))
-    dut._log.info("PCNext:%s", ToHex(dut.dp.PCNext.value))
-    dut._log.info("ALUResult:%s", ToHex(dut.dp.ALUResult.value))
-    dut._log.info("ReadData:%s", ToHex(dut.dp.ReadData.value))
-    dut._log.info("RF_OUT1:%s", ToHex(dut.dp.RF_OUT1.value))
-    dut._log.info("RF_OUT2:%s", ToHex(dut.dp.RF_OUT2.value))
-    dut._log.info("ALUControl:%s", (dut.dp.ALUControl.value))
-    dut._log.info("SrcA:%s", ToHex(dut.dp.SrcA.value))
-    dut._log.info("SrcB:%s", ToHex(dut.dp.SrcB.value))
-    dut._log.info("ImmExt:%s", ToHex(dut.dp.ImmExt.value))
-    dut._log.info("RF_WD:%s", (dut.dp.RF_WD.value))
-    dut._log.info("Memory Write Data:%s", (dut.dp.RF_OUT2.value))
+    # dut._log.info("RegWrite:%s", ToHex(dut.dp.RegWrite.value))
+    # dut._log.info("Result:%s", ToHex(dut.dp.Result.value))
+    # dut._log.info("PCNext:%s", ToHex(dut.dp.PCNext.value))
+    # dut._log.info("ALUResult:%s", ToHex(dut.dp.ALUResult.value))
+    # dut._log.info("ReadData:%s", ToHex(dut.dp.ReadData.value))
+    # dut._log.info("RF_OUT1:%s", ToHex(dut.dp.RF_OUT1.value))
+    # dut._log.info("RF_OUT2:%s", ToHex(dut.dp.RF_OUT2.value))
+    # dut._log.info("ALUControl:%s", (dut.dp.ALUControl.value))
+    # dut._log.info("SrcA:%s", ToHex(dut.dp.SrcA.value))
+    # dut._log.info("SrcB:%s", ToHex(dut.dp.SrcB.value))
+    # dut._log.info("ImmExt:%s", ToHex(dut.dp.ImmExt.value))
+    # dut._log.info("RF_WD:%s", (dut.dp.RF_WD.value))
+    # dut._log.info("Memory Write Data:%s", (dut.dp.RF_OUT2.value))
     
     
     
 def Log_Controller(dut,logger):
     #Log whatever signal you want from the controller, called before positive clock edge
     logger.debug("************ DUT Controller Signals ***************")
-    dut._log.info("PCSrc:%s", ToHex(dut.ctrl.PCSrc.value))
-    dut._log.info("ImmSrc:%s", ToHex(dut.ctrl.ImmSrc.value))
-    dut._log.info("ALUSrc:%s", ToHex(dut.ctrl.ALUSrc.value))
-    dut._log.info("READMODE:%s", dut.ctrl.READMODE.value)
-    dut._log.info("MemWrite:%s", dut.ctrl.MemWrite.value)
-    dut._log.info("RF_WD_SRC:%s", dut.ctrl.RF_WD_SRC.value)
-    dut._log.info("ResultSrc:%s", dut.ctrl.ResultSrc.value)
+    # dut._log.info("PCSrc:%s", ToHex(dut.ctrl.PCSrc.value))
+    # dut._log.info("ImmSrc:%s", ToHex(dut.ctrl.ImmSrc.value))
+    # dut._log.info("ALUSrc:%s", ToHex(dut.ctrl.ALUSrc.value))
+    # dut._log.info("READMODE:%s", dut.ctrl.READMODE.value)
+    # dut._log.info("MemWrite:%s", dut.ctrl.MemWrite.value)
+    # dut._log.info("RF_WD_SRC:%s", dut.ctrl.RF_WD_SRC.value)
+    # dut._log.info("ResultSrc:%s", dut.ctrl.ResultSrc.value)
+    
+    dut._log.info("UART_READ_EN:%s", dut.ctrl.UART_READ_EN.value)
+    dut._log.info("UART_WRITE_EN:%s", dut.ctrl.UART_WRITE_EN.value)
     

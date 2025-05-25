@@ -3,6 +3,8 @@ module Controller
     input  clk, reset,
     input  Zero,
     input  [31:0] Instr, RF_OUT1, RF_OUT2,
+
+    
     input  [31:0] ALUResult, 
 
     output  PCSrc, RegWrite, ResultSrc, RF_WD_SRC,
@@ -140,12 +142,8 @@ assign ALUControl = (op == LUI_INSTR)                     ? 4'b1111 :
                     (op == REG_REG_INSTR || op == REG_IMM_INSTR) ? {funct3, (funct7 == 7'b0100000)} :
                     4'b0000;
 
-
-
-UART_READ = (op == MEM_LOAD_INSTR) && (funct3 == LB) && (ALUResult[31:0] == 32'h00000404);
-UART_WRITE = (op == MEM_STORE_INSTR) && (funct3 == SB) && (ALUResult[31:0] == 32'h00000400);
-
-
+assign UART_READ_EN = (op == MEM_LOAD_INSTR) && (funct3 == LW) && (ALUResult[31:0] == 32'h00000404);
+assign UART_WRITE_EN = (op == MEM_STORE_INSTR) && (funct3 == SB) && (ALUResult[31:0] == 32'h00000400);
 
 
 endmodule

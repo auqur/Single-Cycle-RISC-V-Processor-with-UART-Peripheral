@@ -1,5 +1,5 @@
 module RISCVPc (
-    input  clk, reset,
+    input  clk, reset, UART_CLK, UART_RX, UART_TX,
     input  [4:0] Debug_Source_select,
     input  [31:0] Debug_out,
     output [31:0] Debug_PC
@@ -10,6 +10,10 @@ wire [1:0] MemWrite, ALUSrc;
 wire [2:0] ImmSrc, READMODE;
 wire [3:0] ALUControl;
 wire [31:0] Instr, RF_OUT1, RF_OUT2, PC;
+
+wire [31:0] ALUResult; // i.e Memory address
+wire UART_READ_EN, UART_WRITE_EN;
+
 
 assign Debug_PC = PC;
 
@@ -31,7 +35,13 @@ Datapath dp (
     .Instr(Instr),
     .Debug_out(Debug_out),
     .RF_OUT1(RF_OUT1),
-    .RF_OUT2(RF_OUT2)
+    .RF_OUT2(RF_OUT2),
+    .ALUResult(ALUResult),
+    .UART_CLK(UART_CLK), // Assuming UART_CLK is same as clk
+    .UART_RX(UART_RX), // Placeholder for UART_RX, can be connected to actual RX line
+    .UART_READ_EN(UART_READ_EN), // Placeholder for UART read enable
+    .UART_WRITE_EN(UART_WRITE_EN), // Placeholder for UART write enable
+    .UART_TX(UART_TX) // Placeholder for UART TX, can be connected to actual TX line
 );
 
 Controller ctrl (
@@ -49,7 +59,10 @@ Controller ctrl (
     .ALUSrc(ALUSrc),
     .ImmSrc(ImmSrc),
     .READMODE(READMODE),
-    .ALUControl(ALUControl)
+    .ALUControl(ALUControl),
+    .ALUResult(ALUResult),
+    .UART_READ_EN(UART_READ_EN), 
+    .UART_WRITE_EN(UART_WRITE_EN) 
 );
 
 endmodule

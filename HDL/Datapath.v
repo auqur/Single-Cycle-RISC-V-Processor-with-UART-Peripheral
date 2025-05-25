@@ -23,7 +23,7 @@ wire [31:0] PCNext, PCPlus4, PCTarget, RF_WD;
 wire [31:0] SrcA, SrcB, ImmExt;
 wire [31:0] ReadData;
 wire [31:0] Result;
-wire [31:0] ALUResult;
+
 
 Register_reset #(32) PC_Register
 (
