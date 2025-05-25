@@ -114,13 +114,13 @@ class TB:
                         case "100": # XOR
                             result = R1 ^ R2
                             self.Register_File[inst_fields.rd] = result
-                        case "101": # SRL
-                            result = shift_helper(R1, shamt, 1)
+                        case "101": # SRL         
+                            result = shift_helper(signed_to_unsigned_32bit(R1), shamt, 1)
                             self.Register_File[inst_fields.rd] = result
                         case "110": # OR
                             result = R1 | R2
                             self.Register_File[inst_fields.rd] = result
-                        case "111":
+                        case "111": # AND
                             result = R1 & R2
                             self.Register_File[inst_fields.rd] = result
                 

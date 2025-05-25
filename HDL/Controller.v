@@ -111,7 +111,7 @@ assign MemWrite = (op == MEM_STORE_INSTR) ?
                   2'b00;
 
 //ImmSrc
-assign ImmSrc = (op == REG_IMM_INSTR & funct3 == SLTIU) ? 3'b001 :  //UEX12
+assign ImmSrc = (op == REG_IMM_INSTR & funct3 == SLTIU) ? 3'b000 :  //UEX12
                 (op == BRANCH_INSTR ) ? 3'b010 :    //B_IMM
                 (op == JAL_INSTR) ? 3'b011 : //JALEX
                 (op == LUI_INSTR | op == AUIPC_INSTR) ? 3'b100 : //U_IMM
@@ -132,8 +132,10 @@ assign ALUSrc[0] = ((op == BRANCH_INSTR) | (op == AUIPC_INSTR) | (op == JAL_INST
 assign ALUSrc[1] = (op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == MEM_STORE_INSTR | op == JALR_INSTR | op == BRANCH_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR);
 
 //ALUControl
-assign ALUControl[3:1] = (op == REG_REG_INSTR | op == REG_IMM_INSTR ) ? funct3 : 3'b0;
-assign ALUControl[0] = (op == REG_REG_INSTR | op == REG_IMM_INSTR ) ? (funct7 == 7'b0100000) : 1'b0;
+assign ALUControl = (op == LUI_INSTR)                     ? 4'b1111 :
+                    (op == REG_REG_INSTR || op == REG_IMM_INSTR) ? {funct3, (funct7 == 7'b0100000)} :
+                    4'b0000;
+
 
 endmodule
 //iverilog -o Controller.out Controller.v
