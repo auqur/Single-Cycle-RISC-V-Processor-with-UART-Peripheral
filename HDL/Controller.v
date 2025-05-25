@@ -105,7 +105,7 @@ assign RegWrite = (op == REG_REG_INSTR | op == REG_IMM_INSTR | op == MEM_LOAD_IN
 
 //ResultSrc
 assign ResultSrc = (op == MEM_LOAD_INSTR);
- 
+
 //RF_WD_SRC
 assign RF_WD_SRC = (op == JAL_INSTR | op == JALR_INSTR);
 
@@ -138,9 +138,8 @@ assign ALUSrc[0] = ((op == BRANCH_INSTR) | (op == AUIPC_INSTR) | (op == JAL_INST
 assign ALUSrc[1] = (op == REG_IMM_INSTR | op == MEM_LOAD_INSTR | op == MEM_STORE_INSTR | op == JALR_INSTR | op == BRANCH_INSTR | op == LUI_INSTR | op == AUIPC_INSTR | op == JAL_INSTR);
 
 //ALUControl
-assign ALUControl = (op == LUI_INSTR)                     ? 4'b1111 :
-                    (op == REG_REG_INSTR || op == REG_IMM_INSTR) ? {funct3, (funct7 == 7'b0100000)} :
-                    4'b0000;
+assign ALUControl[3:1] = (op == LUI_INSTR) ? 3'b111 : (op == REG_REG_INSTR | op == REG_IMM_INSTR ) ? funct3 : 3'b0;
+assign ALUControl[0] = (op == LUI_INSTR) ? 1'b1 : (op == REG_REG_INSTR | (op == REG_IMM_INSTR &  (funct3 == 3'b101) )) ? (funct7 == 7'b0100000) : 1'b0;
 
 assign UART_READ_EN = (op == MEM_LOAD_INSTR) && (funct3 == LW) && (ALUResult[31:0] == 32'h00000404);
 assign UART_WRITE_EN = (op == MEM_STORE_INSTR) && (funct3 == SB) && (ALUResult[31:0] == 32'h00000400);
