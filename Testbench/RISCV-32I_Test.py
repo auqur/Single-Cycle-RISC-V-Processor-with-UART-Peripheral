@@ -25,6 +25,10 @@ def sign_extend(value, bits):
     sign_bit = value[0]
     return sign_bit * (32 - bits) + value
 
+def signed_to_unsigned_32bit(n):
+    return n % (1 << 32)
+
+
 class TB:
     def __init__(self, Instruction_list,dut,dut_PC,dut_regfile):
         self.dut = dut
@@ -172,6 +176,7 @@ class TB:
     
             elif (inst_fields.op == "0000011"):
                 R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
+                R1_U = signed_to_unsigned_32bit(R1)
                 Imm = inst_fields.imm
                 match inst_fields.funct3:
                     case "000": # LB
@@ -216,6 +221,9 @@ class TB:
             elif (inst_fields.op == "1100011"):
                 R1 = extend_to_32bit(self.Register_File[inst_fields.rs1], 32, signed=True)
                 R2 = extend_to_32bit(self.Register_File[inst_fields.rs2], 32, signed=True)
+                R1_U = signed_to_unsigned_32bit(R1)
+                R2_U = signed_to_unsigned_32bit(R2)
+                self.logger.debug("R1_U: %d, R2_U: %d", R1_U, R2_U)
                 Imm = inst_fields.imm
                 R1_Signed = to_signed32(R1)
                 R2_Signed = to_signed32(R2)
@@ -233,10 +241,11 @@ class TB:
                         if (R1_Signed >= R2_Signed):
                             self.PC = self.PC - 4 + Imm
                     case "110": # BLTU
-                        if (R1 < R2):
+                        
+                        if (R1_U < R2_U):          
                             self.PC = self.PC - 4 + Imm
-                    case "111":
-                        if (R1 >= R2):
+                    case "111": #BGEU
+                        if (R1_U >= R2_U):
                             self.PC = self.PC - 4 + Imm
 
             elif (inst_fields.op == "0010111"): # AUIPC
