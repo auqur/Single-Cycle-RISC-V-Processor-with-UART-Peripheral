@@ -92,15 +92,16 @@ def Log_Datapath(dut,logger):
     dut._log.info("RegWrite:%s", ToHex(dut.dp.RegWrite.value))
     dut._log.info("Result:%s", ToHex(dut.dp.Result.value))
     dut._log.info("PCNext:%s", ToHex(dut.dp.PCNext.value))
-    dut._log.info("ALUResult:%s", dut.dp.ALUResult.value)
-    dut._log.info("ReadData:%s", dut.dp.ReadData.value)
+    dut._log.info("ALUResult:%s", ToHex(dut.dp.ALUResult.value))
+    dut._log.info("ReadData:%s", ToHex(dut.dp.ReadData.value))
     dut._log.info("RF_OUT1:%s", ToHex(dut.dp.RF_OUT1.value))
     dut._log.info("RF_OUT2:%s", ToHex(dut.dp.RF_OUT2.value))
     dut._log.info("ALUControl:%s", (dut.dp.ALUControl.value))
     dut._log.info("SrcA:%s", ToHex(dut.dp.SrcA.value))
     dut._log.info("SrcB:%s", ToHex(dut.dp.SrcB.value))
     dut._log.info("ImmExt:%s", ToHex(dut.dp.ImmExt.value))
-    dut._log.info("RF_WD:%s", ToHex(dut.dp.RF_WD.value))
+    dut._log.info("RF_WD:%s", (dut.dp.RF_WD.value))
+    dut._log.info("Memory Write Data:%s", (dut.dp.RF_OUT2.value))
     
     
     

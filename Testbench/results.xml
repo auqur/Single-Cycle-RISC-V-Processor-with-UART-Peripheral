@@ -1,8 +1,8 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1748169445" />
-    <testcase name="RISCV_Test" classname="RISCV-32I_Test" file="/home/auqur/Desktop/ee446/Testbench/RISCV-32I_Test.py" lineno="290" time="0.04672527313232422" sim_time_ns="480000.001" ratio_time="10272813.165600082">
-      <failure message="Test failed with RANDOM_SEED=1748169445" />
+    <property name="random_seed" value="1748170717" />
+    <testcase name="RISCV_Test" classname="RISCV-32I_Test" file="/home/auqur/Desktop/ee446/Testbench/RISCV-32I_Test.py" lineno="290" time="0.04655313491821289" sim_time_ns="480000.001" ratio_time="10310798.657132123">
+      <failure message="Test failed with RANDOM_SEED=1748170717" />
     </testcase>
   </testsuite>
 </testsuites>
