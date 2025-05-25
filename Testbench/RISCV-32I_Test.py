@@ -12,7 +12,7 @@
 import logging
 import cocotb
 from Helper_lib import read_file_to_list,Instruction,rotate_right, shift_helper, ByteAddressableMemory,reverse_hex_string_endiannes, extend_to_32bit
-from Helper_Student import Log_Datapath,Log_Controller
+from Helper_Student import Log_Datapath,Log_Controller, decode_and_print_instruction
 from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, Edge, Timer
 from cocotb.binary import BinaryValue
@@ -59,7 +59,7 @@ class TB:
             self.logger.debug("Register%d: %d \t %d", i, ref_val, dut_val)
         assert self.PC == self.dut_PC.value
         for i in range(32):
-            assert self.Register_File[i] == self.dut_regfile.Reg_Out[i].value
+            assert to_signed32(self.Register_File[i]) == to_signed32(self.dut_regfile.Reg_Out[i].value)
 
     #A model of the verilog code to confirm operation, data is In_data
     def performance_model (self):
@@ -76,6 +76,7 @@ class TB:
         execute_flag = True
         #Call Instruction calls to get each field from the instruction
         inst_fields = Instruction(current_instruction)
+        self.logger.debug("%s", decode_and_print_instruction(inst_fields))
         inst_fields.log(self.logger)
         
         if inst_fields.rd < 0 or inst_fields.rd >= len(self.Register_File):

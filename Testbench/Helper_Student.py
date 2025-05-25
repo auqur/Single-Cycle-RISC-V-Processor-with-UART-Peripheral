@@ -82,7 +82,7 @@ def decode_and_print_instruction(inst_fields):
     elif op == "1100111":  # JALR
         instr_str = f"JALR {rd}, {imm}({rs1})"
 
-    print(f"--> Decoded Instruction: {instr_str}")
+    return f"Decoded Instruction: {instr_str}"
 
 
 #Populate the below functions as in the example lines of code to print your values for debugging

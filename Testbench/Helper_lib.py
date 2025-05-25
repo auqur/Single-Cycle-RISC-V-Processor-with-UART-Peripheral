@@ -1,3 +1,5 @@
+from Helper_Student import *
+
 def read_file_to_list(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
