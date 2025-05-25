@@ -1,0 +1,126 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
+| Date         : Sun May 25 22:39:12 2025
+| Host         : MertMihci running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file Nexys_A7_control_sets_placed.rpt
+| Design       : Nexys_A7
+| Device       : xc7a100t
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Total control sets                                       |    48 |
+|    Minimum number of control sets                        |    48 |
+|    Addition due to synthesis replication                 |     0 |
+|    Addition due to physical synthesis replication        |     0 |
+| Unused register locations in slices containing registers |    32 |
++----------------------------------------------------------+-------+
+* Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
+** Run report_qor_suggestions for automated merging and remapping suggestions
+
+
+2. Histogram
+------------
+
++--------------------+-------+
+|       Fanout       | Count |
++--------------------+-------+
+| Total control sets |    48 |
+| >= 0 to < 4        |     1 |
+| >= 4 to < 6        |     4 |
+| >= 6 to < 8        |     1 |
+| >= 8 to < 10       |     2 |
+| >= 10 to < 12      |     0 |
+| >= 12 to < 14      |     2 |
+| >= 14 to < 16      |     2 |
+| >= 16              |    36 |
++--------------------+-------+
+* Control sets can be remapped at either synth_design or opt_design
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |               7 |            5 |
+| No           | No                    | Yes                    |              12 |            5 |
+| No           | Yes                   | No                     |              64 |           31 |
+| Yes          | No                    | No                     |            2112 |         1968 |
+| Yes          | No                    | Yes                    |              26 |            8 |
+| Yes          | Yes                   | No                     |            1027 |          545 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++----------------------+--------------------------------------------------+---------------------------------------------------------+------------------+----------------+--------------+
+|     Clock Signal     |                   Enable Signal                  |                     Set/Reset Signal                    | Slice Load Count | Bel Load Count | Bels / Slice |
++----------------------+--------------------------------------------------+---------------------------------------------------------+------------------+----------------+--------------+
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/tx_inst/tx1_out          | riscpcc/dp/uartinstance/tx_inst/tx_i_1_n_0              |                1 |              1 |         1.00 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/UART_READ_EN              | debouncer_0/buttons[0]                                  |                1 |              4 |         4.00 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/rx_inst/bit_index        | debouncer_0/buttons[0]                                  |                1 |              4 |         4.00 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/rx_inst/E[0]             | debouncer_0/buttons[0]                                  |                1 |              4 |         4.00 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/tx_inst/tx1_out          | riscpcc/dp/uartinstance/tx_inst/shift_reg               |                1 |              4 |         4.00 |
+|  CLK100MHZ_IBUF_BUFG |                                                  |                                                         |                5 |              7 |         1.40 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/rx_inst/rx_ready_i_1_n_0 | debouncer_0/buttons[0]                                  |                3 |              8 |         2.67 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/tx_inst/shift_reg        | debouncer_0/buttons[0]                                  |                2 |              8 |         4.00 |
+|  CLK100MHZ_IBUF_BUFG |                                                  | debouncer_0/buttons[0]                                  |                5 |             12 |         2.40 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/rx_inst/p_0_in           |                                                         |                2 |             12 |         6.00 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/rx_inst/clk_count_0      | debouncer_0/buttons[0]                                  |                4 |             14 |         3.50 |
+|  CLK100MHZ_IBUF_BUFG | riscpcc/dp/uartinstance/tx_inst/tx_busy          | riscpcc/dp/uartinstance/tx_inst/clk_count[0]_i_1__0_n_0 |                4 |             14 |         3.50 |
+|  CLK100MHZ_IBUF_BUFG |                                                  | mssd_0/idx_0                                            |                9 |             32 |         3.56 |
+|  CLK100MHZ_IBUF_BUFG | debouncer_0/genblk1[0].count_reg[0]0             |                                                         |                8 |             32 |         4.00 |
+|  CLK100MHZ_IBUF_BUFG | debouncer_0/genblk1[4].count[4][0]_i_1_n_0       |                                                         |                8 |             32 |         4.00 |
+|  buttons_BUFG[4]     |                                                  | debouncer_0/buttons[0]                                  |               22 |             32 |         1.45 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_22[0]          | debouncer_0/buttons[0]                                  |               24 |             32 |         1.33 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_0[0]           | debouncer_0/buttons[0]                                  |               23 |             32 |         1.39 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_30[0]          | debouncer_0/buttons[0]                                  |               15 |             32 |         2.13 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_4[0]           | debouncer_0/buttons[0]                                  |               14 |             32 |         2.29 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_13[0]          | debouncer_0/buttons[0]                                  |               15 |             32 |         2.13 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_1[0]           | debouncer_0/buttons[0]                                  |               19 |             32 |         1.68 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_25[0]          | debouncer_0/buttons[0]                                  |               22 |             32 |         1.45 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_28[0]          | debouncer_0/buttons[0]                                  |               16 |             32 |         2.00 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_23[0]          | debouncer_0/buttons[0]                                  |               20 |             32 |         1.60 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_18[0]          | debouncer_0/buttons[0]                                  |               13 |             32 |         2.46 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_5[0]           | debouncer_0/buttons[0]                                  |               12 |             32 |         2.67 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_14[0]          | debouncer_0/buttons[0]                                  |               18 |             32 |         1.78 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_15[0]          | debouncer_0/buttons[0]                                  |               21 |             32 |         1.52 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_10[0]          | debouncer_0/buttons[0]                                  |               17 |             32 |         1.88 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_2[0]           | debouncer_0/buttons[0]                                  |               18 |             32 |         1.78 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_3[0]           | debouncer_0/buttons[0]                                  |               16 |             32 |         2.00 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_6[0]           | debouncer_0/buttons[0]                                  |               18 |             32 |         1.78 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_9[0]           | debouncer_0/buttons[0]                                  |               17 |             32 |         1.88 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_20[0]          | debouncer_0/buttons[0]                                  |               15 |             32 |         2.13 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_8[0]           | debouncer_0/buttons[0]                                  |               19 |             32 |         1.68 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_26[0]          | debouncer_0/buttons[0]                                  |               15 |             32 |         2.13 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_12[0]          | debouncer_0/buttons[0]                                  |               14 |             32 |         2.29 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_19[0]          | debouncer_0/buttons[0]                                  |               19 |             32 |         1.68 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_17[0]          | debouncer_0/buttons[0]                                  |               13 |             32 |         2.46 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_11[0]          | debouncer_0/buttons[0]                                  |               20 |             32 |         1.60 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_24[0]          | debouncer_0/buttons[0]                                  |               24 |             32 |         1.33 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_16[0]          | debouncer_0/buttons[0]                                  |               14 |             32 |         2.29 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_29[0]          | debouncer_0/buttons[0]                                  |               14 |             32 |         2.29 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_7[0]           | debouncer_0/buttons[0]                                  |               14 |             32 |         2.29 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_27[0]          | debouncer_0/buttons[0]                                  |               19 |             32 |         1.68 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/OUT_reg[0]_21[0]          | debouncer_0/buttons[0]                                  |               17 |             32 |         1.88 |
+|  buttons_BUFG[4]     | riscpcc/dp/PC_Register/E[0]                      |                                                         |             1952 |           2048 |         1.05 |
++----------------------+--------------------------------------------------+---------------------------------------------------------+------------------+----------------+--------------+
+
+
