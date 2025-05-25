@@ -12,6 +12,12 @@ module Memory#(parameter BYTE_SIZE=4, parameter ADDR_WIDTH=32)
 reg [7:0] mem [255:0];
 integer i, k;
 
+initial begin
+    for (i = 0; i < 256; i = i + 1) begin
+        mem[i] = 8'b0;
+    end
+end
+
 always @(*) begin
     case(READMODE)
         3'b000: begin // Word read
@@ -29,11 +35,13 @@ always @(*) begin
             RD[31:16] = {16{RD[15]}};
         end
         3'b010: begin // Byte Unsigned read
-            RD[7:0] = mem[ADDR];
+            for (i = 0; i < BYTE_SIZE / 4; i = i + 1)
+                RD[8*i+:8] = mem[ADDR+i];
             RD[31:8] = 24'b0;
         end
         3'b110: begin // Byte Signed read
-            RD[7:0] = mem[ADDR];
+                for (i = 0; i < BYTE_SIZE / 4; i = i + 1)
+                RD[8*i+:8] = mem[ADDR+i];
             RD[31:8] = {24{RD[7]}};
         end
         default: RD = {(BYTE_SIZE*8){1'b0}};

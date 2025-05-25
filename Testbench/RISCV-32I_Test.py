@@ -222,22 +222,22 @@ class TB:
                 match inst_fields.funct3:
                     case "000": # BEQ
                         if (R1_Signed == R2_Signed):
-                            self.PC = self.PC + Imm
+                            self.PC = self.PC - 4 + Imm
                     case "001": # BNE
                         if (R1_Signed != R2_Signed):
-                            self.PC = self.PC + Imm
+                            self.PC = self.PC - 4 + Imm
                     case "100": # BLT
                         if (R1_Signed < R2_Signed):
-                            self.PC = self.PC + Imm
+                            self.PC = self.PC - 4 + Imm
                     case "101": # BGE
                         if (R1_Signed >= R2_Signed):
-                            self.PC = self.PC + Imm
+                            self.PC = self.PC - 4 + Imm
                     case "110": # BLTU
                         if (R1 < R2):
-                            self.PC = self.PC + Imm
+                            self.PC = self.PC - 4 + Imm
                     case "111":
                         if (R1 >= R2):
-                            self.PC = self.PC + Imm
+                            self.PC = self.PC - 4 + Imm
 
             elif (inst_fields.op == "0010111"): # AUIPC
                 Imm = inst_fields.imm

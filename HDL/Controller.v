@@ -105,9 +105,9 @@ assign RF_WD_SRC = (op == JAL_INSTR | op == JALR_INSTR);
 
 //MemWrite
 assign MemWrite = (op == MEM_STORE_INSTR) ? 
-                  ((funct3 == SB) ? 2'b01 : 
+                  ((funct3 == SB) ? 2'b11 : 
                    (funct3 == SH) ? 2'b10 : 
-                   (funct3 == SW) ? 2'b11 : 2'b00) : 
+                   (funct3 == SW) ? 2'b01 : 2'b00) : 
                   2'b00;
 
 //ImmSrc
@@ -119,11 +119,11 @@ assign ImmSrc = (op == REG_IMM_INSTR & funct3 == SLTIU) ? 3'b001 :  //UEX12
 
 //READMODE
 assign READMODE = (op == MEM_LOAD_INSTR) ? 
-                  ((funct3 == LB) ? 3'b000 : 
-                   (funct3 == LH) ? 3'b001 : 
-                   (funct3 == LW) ? 3'b010 : 
-                   (funct3 == LBU) ? 3'b100 : 
-                   (funct3 == LHU) ? 3'b101 : 3'b000) : 
+                  ((funct3 == LB) ? 3'b110 : 
+                   (funct3 == LH) ? 3'b011 : 
+                   (funct3 == LW) ? 3'b000 : 
+                   (funct3 == LBU) ? 3'b010 : 
+                   (funct3 == LHU) ? 3'b001 : 3'b000) : 
                   3'b000; //default is WORD
 
 //ALUSrc
