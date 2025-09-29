@@ -2,7 +2,7 @@
 
 ## Project Overview  
 This project was developed as part of the **EE446 Computer Architecture Laboratory** at METU.  
-Together with my teammate, we designed and implemented a **32-bit single-cycle RISC-V processor** in **Verilog HDL**, including a **custom UART peripheral** for serial communication.  
+We designed and implemented a **32-bit single-cycle RISC-V processor** in **Verilog HDL**, including a **custom UART peripheral** for serial communication.  
 
 The processor supports the **RV32I Base Integer Instruction Set** (with one additional instruction extension) and was deployed on the **Nexys A7 FPGA** board.  
 
